@@ -1,5 +1,3 @@
-import Recipe from "containers/Recipe/Recipe";
-
 import * as React from "react";
 import { Routes, Route } from "react-router-dom";
 
@@ -11,8 +9,6 @@ function App() {
     <div className="main">
       <Routes>
         <Route path="/" element={<Index />} />
-        <Route exact path="/random" element={<Recipe />} />
-        <Route path="/recipe/:idRecipe" element={<Recipe />} />
       </Routes>
     </div>
   );
