@@ -6,11 +6,9 @@ import Index from "./containers/Index/Index";
 
 function App() {
   return (
-    <div className="main">
-      <Routes>
-        <Route path="/" element={<Index />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<Index />} />
+    </Routes>
   );
 }
 

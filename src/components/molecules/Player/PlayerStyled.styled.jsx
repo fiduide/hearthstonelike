@@ -1,0 +1,45 @@
+import styled from "styled-components";
+
+const PlayerStyled = styled.div`
+  background-image: url("assets/images/rock.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: fit-content;
+  border: 2px solid gray;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+
+  .player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &-name {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    &-hand {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      min-width: 800px;
+    }
+
+    &-discard {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    &-deck-size {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+  }
+`;
+
+export default PlayerStyled;
