@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-export const generateRandomCard = () => {
+export const generateRandomCard = (ownerId) => {
   const types = ["Creature", "Weapon", "Spell"];
   const type = types[Math.floor(Math.random() * types.length)];
   const names = ["Fireball", "Frostbolt", "Gorehowl", "Ashbringer"];
@@ -9,6 +9,7 @@ export const generateRandomCard = () => {
   const hp = Math.floor(Math.random() * 10);
   const cost = Math.floor(Math.random() * 10);
   const id = uuidv4();
+  const owner = ownerId;
   const hasAttacked = false;
   const description = generateCardDescription({
     type,
@@ -17,7 +18,7 @@ export const generateRandomCard = () => {
     cost,
   });
 
-  return { id, type, name, description, attack, hp, cost, hasAttacked };
+  return { id, type, name, description, attack, hp, cost, hasAttacked, owner };
 };
 
 export const generateCardDescription = (card) => {
@@ -32,10 +33,10 @@ export const generateCardDescription = (card) => {
   return description;
 };
 
-export const generateRandomHand = () => {
+export const generateRandomHand = (owner) => {
   const hand = [];
   for (let i = 0; i < 5; i++) {
-    hand.push(generateRandomCard());
+    hand.push(generateRandomCard(owner));
   }
   return hand;
 };
@@ -48,17 +49,17 @@ export const generateRandomHand = () => {
 //   return discard;
 // };
 
-export const generateRandomDeck = () => {
+export const generateRandomDeck = (owner) => {
   const deck = [];
   for (let i = 0; i < 30; i++) {
-    deck.push(generateRandomCard());
+    deck.push(generateRandomCard(owner));
   }
   return deck;
 };
 
 export const writeBoardAction = (action, player) => {
   let p = document.createElement("p");
-  p.innerHTML = action;
+  p.innerHTML = "[player] : " + action;
 
   if (player === "player") {
     p.style.backgroundColor = "blue";

@@ -7,7 +7,8 @@ import { useContext, useEffect, useState } from "react";
 import BoardStyled from "./BoardStyled.styled";
 
 const Board = () => {
-  const { computer, player, currentPlayer } = useContext(PlayerManagerContext);
+  const { computer, player, currentPlayer, playerDeath } =
+    useContext(PlayerManagerContext);
 
   const {
     handleCardClick,
@@ -20,6 +21,8 @@ const Board = () => {
 
   if (currentPlayer.length === 0) {
     return <Loader />;
+  } else if (playerDeath) {
+    return <p>Player mort</p>;
   } else {
     return (
       <BoardStyled>

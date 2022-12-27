@@ -26,7 +26,6 @@ const Player = ({
         {hand.map((card) => (
           <Card
             key={`player-card-${card.id}`}
-            owner={id}
             onCardClick={onCardClick}
             {...card}
           />

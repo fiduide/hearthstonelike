@@ -1,11 +1,16 @@
 import React, { createContext, useEffect, useState } from "react";
-import { generateRandomDeck, generateRandomHand } from "services/helpers";
+import {
+  generateRandomDeck,
+  generateRandomHand,
+  writeBoardAction,
+} from "services/helpers";
 
 export const PlayerManagerContext = createContext(false);
 
 export const PlayerManagerProvider = ({ children }) => {
   const [computer, setComputer] = useState([]);
   const [player, setPlayer] = useState([]);
+  const [playerDeath, setPlayerDeath] = useState(false);
 
   const [currentPlayer, setCurrentPlayer] = useState([]);
 
@@ -15,9 +20,9 @@ export const PlayerManagerProvider = ({ children }) => {
         setComputer({
           id: "computer",
           name: "Computer",
-          hand: generateRandomHand(),
+          hand: generateRandomHand("computer"),
           played: [],
-          deck: generateRandomDeck(),
+          deck: generateRandomDeck("computer"),
           currentMana: 5,
           maxMana: 5,
           hp: 30,
@@ -29,9 +34,9 @@ export const PlayerManagerProvider = ({ children }) => {
         setPlayer({
           id: "player",
           name: "Bob",
-          hand: generateRandomHand(),
+          hand: generateRandomHand("player"),
           played: [],
-          deck: generateRandomDeck(),
+          deck: generateRandomDeck("player"),
           currentMana: 5,
           maxMana: 5,
           hp: 30,
@@ -48,15 +53,16 @@ export const PlayerManagerProvider = ({ children }) => {
     }
   }, [player]);
 
-  // useEffect(() => {
-  //   if (currentPlayer.id === "player") {
-  //     setPlayer(currentPlayer);
-  //   } else if (currentPlayer.id === "computer") {
-  //     setComputer(currentPlayer);
-  //   }
-  // }, [currentPlayer]);
-
   const endTurn = () => {
+    if (currentPlayer.maxMana < 10) {
+      currentPlayer.maxMana += 1;
+    }
+    currentPlayer.currentMana = currentPlayer.maxMana;
+
+    writeBoardAction(
+      `${currentPlayer.id} met fin à son tour`,
+      currentPlayer.id
+    );
     setCurrentPlayer(currentPlayer.id === "player" ? computer : player);
   };
 
@@ -67,6 +73,8 @@ export const PlayerManagerProvider = ({ children }) => {
         player,
         currentPlayer,
         endTurn,
+        playerDeath,
+        setPlayerDeath,
       }}
     >
       {children}
