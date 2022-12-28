@@ -25,7 +25,7 @@ const Board = () => {
     return <p>Player mort</p>;
   } else {
     return (
-      <BoardStyled>
+      <BoardStyled currentPlayer={currentPlayer.id}>
         <div className="current-player">
           <p>Current player : {currentPlayer.id}</p>
         </div>

@@ -36,6 +36,13 @@ const Board = styled.div`
 
   button {
     position: absolute;
+    background-image: ${(props) =>
+      props.currentPlayer === "player"
+        ? 'url("assets/images/button/ambre.jpg")'
+        : 'url("assets/images/button/ambre-gray.jpg");'};
+    border: none;
+    border-radius: 8px;
+    padding: 5px;
     top: 50%;
     right: 5%;
     z-index: 1;

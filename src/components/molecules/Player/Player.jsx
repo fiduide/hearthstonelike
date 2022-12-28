@@ -1,3 +1,4 @@
+import { ProgressBar } from "components/atoms";
 import { Card } from "../Card";
 import PlayerStyled from "./PlayerStyled.styled";
 
@@ -20,6 +21,7 @@ const Player = ({
         <div className="player-name">{name}</div>
         <div className="player-hp">
           {hp} / {maxHp}
+          <ProgressBar hp={hp} maxHp={hp}></ProgressBar>
         </div>
       </div>
       <div className="player-hand">

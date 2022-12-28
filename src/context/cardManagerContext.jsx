@@ -211,8 +211,6 @@ export const CardManagerProvider = ({ children }) => {
 
       const playerHasCardsInPlay = playerCardsInPlay.length > 0;
 
-      console.table(attackableCards);
-
       if (computer.currentMana === 0 || attackableCards.length === 0) {
         computerHasAction = false;
       } else {
@@ -231,12 +229,13 @@ export const CardManagerProvider = ({ children }) => {
         const cardToPlay =
           availableCards[Math.floor(Math.random() * availableCards.length)];
 
-        writeBoardAction(
-          `J'invoque la carte (${cardToPlay.name})`,
-          currentPlayer.id
-        );
-
-        invokeCard(cardToPlay);
+        setTimeout(() => {
+          writeBoardAction(
+            `J'invoque la carte (${cardToPlay.name})`,
+            currentPlayer.id
+          );
+          invokeCard(cardToPlay);
+        }, 500);
       }
 
       if (playerHasCardsInPlay && attackableCards.length > 0) {
@@ -247,28 +246,29 @@ export const CardManagerProvider = ({ children }) => {
           playerCardsInPlay[
             Math.floor(Math.random() * playerCardsInPlay.length)
           ];
-
-        writeBoardAction(
-          `J'attaque la carte (${defendingCard.name}) d'en face avec (${attackingCard.name})`,
-          currentPlayer.id
-        );
-        attackCardPlayer(attackingCard, defendingCard);
+        setTimeout(() => {
+          writeBoardAction(
+            `J'attaque la carte (${defendingCard.name}) d'en face avec (${attackingCard.name})`,
+            currentPlayer.id
+          );
+          attackCardPlayer(attackingCard, defendingCard);
+        }, 500);
       } else if (attackableCards.length > 0) {
         // Si le joueur n'a pas de cartes sur le board, attaquer le joueur directement
         const attackingCard =
           attackableCards[Math.floor(Math.random() * attackableCards.length)];
-
-        writeBoardAction(
-          `J'attaque le joueur d'en face avec la carte (${attackingCard.name})`,
-          currentPlayer.id
-        );
-        attackPlayer(attackingCard, "player");
-      } else {
-        writeBoardAction(`Je ne fais rien`, currentPlayer.id);
+        setTimeout(() => {
+          writeBoardAction(
+            `J'attaque le joueur d'en face avec la carte (${attackingCard.name})`,
+            currentPlayer.id
+          );
+          attackPlayer(attackingCard, "player");
+        }, 500);
       }
     }
-
-    endTurn();
+    setTimeout(() => {
+      endTurn();
+    }, 1500);
   };
 
   useEffect(() => {
