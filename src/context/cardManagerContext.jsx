@@ -19,7 +19,7 @@ export const CardManagerProvider = ({ children }) => {
   const [isAttacking, setIsAttacking] = useState(false);
 
   const handleCardClick = (card) => {
-    if (card.hasAttacked) {
+    if (card.hasAttacked && card.owner === currentPlayer.id) {
       writeBoardAction(
         `La carte ${card.name} a déjà attaqué ce tour-ci`,
         currentPlayer.id
@@ -138,6 +138,13 @@ export const CardManagerProvider = ({ children }) => {
       `${currentPlayer.id} joue la carte ${card.name}`,
       currentPlayer.id
     );
+
+    card.abilities.forEach((ability) => {
+      if (ability.useAbility) {
+        ability.useAbility(currentPlayer, card);
+      }
+      writeBoardAction(`${ability.description}`, currentPlayer.id);
+    });
   };
 
   const handleEndTurnClick = () => {
@@ -261,7 +268,7 @@ export const CardManagerProvider = ({ children }) => {
       }
     }
 
-    // endTurn();
+    endTurn();
   };
 
   useEffect(() => {
