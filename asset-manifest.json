@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/hearthstonelike/static/css/main.289b2fbc.css",
-    "main.js": "/hearthstonelike/static/js/main.257600ca.js",
+    "main.js": "/hearthstonelike/static/js/main.bfab40b5.js",
     "index.html": "/hearthstonelike/index.html",
     "main.289b2fbc.css.map": "/hearthstonelike/static/css/main.289b2fbc.css.map",
-    "main.257600ca.js.map": "/hearthstonelike/static/js/main.257600ca.js.map"
+    "main.bfab40b5.js.map": "/hearthstonelike/static/js/main.bfab40b5.js.map"
   },
   "entrypoints": [
     "static/css/main.289b2fbc.css",
-    "static/js/main.257600ca.js"
+    "static/js/main.bfab40b5.js"
   ]
 }
