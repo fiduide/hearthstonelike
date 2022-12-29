@@ -70,6 +70,7 @@ const Card = (props) => {
           <div className="card-stat hp">{hp}</div>
           <div className="card-stat attack">{attack}</div>
           <div className="card-stat cost">{cost}</div>
+          <p>{type}</p>
         </div>
       </CardStyled>
     </animated.div>

@@ -139,7 +139,7 @@ export const CardManagerProvider = ({ children }) => {
 
     card.abilities.forEach((ability) => {
       if (ability.useAbility) {
-        ability.useAbility(currentPlayer, card, cardsInPlay);
+        ability.useAbility(currentPlayer, card, updatedCardsInPlay);
       }
 
       if (ability.invokeMinion) {
