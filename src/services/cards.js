@@ -4,6 +4,7 @@ const cards = [
     attack: 5,
     type: "Humanoïde",
     hp: 10,
+    description: "Give 5HP to owner",
     cost: 2,
     abilities: [
       {
@@ -24,6 +25,7 @@ const cards = [
     name: "Guerrier",
     attack: 1,
     type: "Orc",
+    description: "Simple war",
     hp: 2,
     cost: 1,
     abilities: [],
@@ -33,6 +35,7 @@ const cards = [
     attack: 2,
     type: "Humanoïde",
     hp: 2,
+    description: "Give +2 Attack in two random card in your hand",
     cost: 4,
     abilities: [
       {

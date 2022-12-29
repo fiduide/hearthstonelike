@@ -191,7 +191,9 @@ export const CardManagerProvider = ({ children }) => {
     setSelectedCard(null);
   };
 
-  const handleComputerTurn = () => {
+  //COMPUTER SYSTEM
+
+  const handleComputerTurn = async () => {
     writeBoardAction(`Lancement du système ordinateur`, currentPlayer.id);
     // Analyser l'état de la partie
 
@@ -228,47 +230,45 @@ export const CardManagerProvider = ({ children }) => {
 
         const cardToPlay =
           availableCards[Math.floor(Math.random() * availableCards.length)];
-
-        setTimeout(() => {
-          writeBoardAction(
-            `J'invoque la carte (${cardToPlay.name})`,
-            currentPlayer.id
-          );
-          invokeCard(cardToPlay);
-        }, 500);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        writeBoardAction(
+          `J'invoque la carte (${cardToPlay.name})`,
+          currentPlayer.id
+        );
+        invokeCard(cardToPlay);
       }
 
       if (playerHasCardsInPlay && attackableCards.length > 0) {
         // Si le joueur a des cartes sur le board, attaquer une de ses cartes avec une carte de l'ordinateur
+
         const attackingCard =
           attackableCards[Math.floor(Math.random() * attackableCards.length)];
         const defendingCard =
           playerCardsInPlay[
             Math.floor(Math.random() * playerCardsInPlay.length)
           ];
-        setTimeout(() => {
-          writeBoardAction(
-            `J'attaque la carte (${defendingCard.name}) d'en face avec (${attackingCard.name})`,
-            currentPlayer.id
-          );
-          attackCardPlayer(attackingCard, defendingCard);
-        }, 500);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        writeBoardAction(
+          `J'attaque la carte (${defendingCard.name}) d'en face avec (${attackingCard.name})`,
+          currentPlayer.id
+        );
+        attackCardPlayer(attackingCard, defendingCard);
       } else if (attackableCards.length > 0) {
         // Si le joueur n'a pas de cartes sur le board, attaquer le joueur directement
         const attackingCard =
           attackableCards[Math.floor(Math.random() * attackableCards.length)];
-        setTimeout(() => {
-          writeBoardAction(
-            `J'attaque le joueur d'en face avec la carte (${attackingCard.name})`,
-            currentPlayer.id
-          );
-          attackPlayer(attackingCard, "player");
-        }, 500);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        writeBoardAction(
+          `J'attaque le joueur d'en face avec la carte (${attackingCard.name})`,
+          currentPlayer.id
+        );
+        attackPlayer(attackingCard, "player");
       }
     }
-    setTimeout(() => {
-      endTurn();
-    }, 1500);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    endTurn();
   };
 
   useEffect(() => {

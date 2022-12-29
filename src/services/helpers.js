@@ -26,28 +26,13 @@ const cards = getCards();
 
 export const generateRandomCard = (ownerId) => {
   let card = cards[Math.floor(Math.random() * cards.length)];
-  const description = generateCardDescription({
-    ...card,
-  });
+
   return {
     ...card,
     id: uuidv4(),
     hasAttacked: false,
     owner: ownerId,
-    description: description,
   };
-};
-
-export const generateCardDescription = (card) => {
-  let description = "";
-  if (card.type === "Creature") {
-    description += `A ${card.attack}creature with ${card.hp} hit points.`;
-  } else if (card.type === "Weapon") {
-    description += `A weapon with ${card.attack} attack.`;
-  } else if (card.type === "Spell") {
-    description += `A spell with a cost of ${card.cost} mana that does X damage.`;
-  }
-  return description;
 };
 
 export const generateRandomHand = (owner) => {

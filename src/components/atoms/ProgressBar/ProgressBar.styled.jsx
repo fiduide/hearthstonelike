@@ -4,6 +4,7 @@ const ProgressBarStyled = styled.div`
   width: ${(props) => props.maxHp + "%"};
   height: 15px;
   margin: auto;
+  background-color: gray;
   .progress {
     background-color: red;
     height: 100%;
