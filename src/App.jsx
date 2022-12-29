@@ -7,7 +7,7 @@ import Index from "./containers/Index/Index";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
+      <Route path="/hearthstonelike/" element={<Index />} />
     </Routes>
   );
 }
