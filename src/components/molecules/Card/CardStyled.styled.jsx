@@ -23,6 +23,16 @@ const CardStyled = styled.div`
     justify-content: center;
     text-align: center;
     padding-top: 60%;
+    font-size: 12px;
+  }
+
+  .type {
+    font-size: 9px;
+    color: white;
+    position: absolute;
+    top: 0;
+    right: 25px;
+    text-align: center;
   }
 
   .card-description {
