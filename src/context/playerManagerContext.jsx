@@ -16,17 +16,16 @@ export const PlayerManagerProvider = ({ children }) => {
   const [currentPlayer, setCurrentPlayer] = useState([]);
 
   useEffect(() => {
-    const generatePlayer = async () => {
+    const generatePlayer = () => {
       if (computer.length === 0) {
         setComputer({
           id: "computer",
           name: "Computer",
           hand: generateRandomHand("computer"),
-          played: [],
           deck: generateRandomDeck("computer"),
           currentMana: 5,
           maxMana: 5,
-          hp: 30,
+          hp: 1,
           maxHp: 30,
         });
       }
@@ -36,11 +35,10 @@ export const PlayerManagerProvider = ({ children }) => {
           id: "player",
           name: "Bob",
           hand: generateRandomHand("player"),
-          played: [],
           deck: generateRandomDeck("player"),
           currentMana: 5,
           maxMana: 5,
-          hp: 30,
+          hp: 1,
           maxHp: 30,
         });
       }

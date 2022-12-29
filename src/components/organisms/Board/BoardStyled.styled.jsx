@@ -3,7 +3,7 @@ import styled from "styled-components";
 const Board = styled.div`
   position: relative;
   width: 100%;
-  background-image: url("assets/images/wood.png");
+  background-image: url(${(props) => props.bg});
   background-repeat: no-repeat;
   background-size: cover;
 
@@ -22,11 +22,15 @@ const Board = styled.div`
   }
   .box-card {
     border: 1px solid black;
-    height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    min-height: 300px;
+
+    hr {
+      width: 100%;
+    }
     .board-card {
       display: flex;
       flex-wrap: wrap;
@@ -36,10 +40,7 @@ const Board = styled.div`
 
   button {
     position: absolute;
-    background-image: ${(props) =>
-      props.currentPlayer === "player"
-        ? 'url("assets/images/button/ambre.jpg")'
-        : 'url("assets/images/button/ambre-gray.jpg");'};
+    background-image: url(${(props) => props.buttonBg});
     border: none;
     border-radius: 8px;
     padding: 5px;

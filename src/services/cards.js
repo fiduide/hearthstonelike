@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 const cards = [
   {
     name: "Clerc",
@@ -31,6 +33,24 @@ const cards = [
     abilities: [],
   },
   {
+    name: "Chasseur",
+    attack: 1,
+    type: "Orc",
+    description: "Can attack direcly",
+    hp: 2,
+    cost: 1,
+    abilities: [
+      {
+        description: "Can attack direcly when is invoke",
+        useAbility: (currentPlayer, card) => {
+          if (currentPlayer) {
+            card.hasAttacked = false;
+          }
+        },
+      },
+    ],
+  },
+  {
     name: "Paladin",
     attack: 2,
     type: "Humanoïde",
@@ -51,6 +71,41 @@ const cards = [
             }
           }
         },
+      },
+    ],
+  },
+  {
+    name: "Demoniste",
+    attack: 2,
+    type: "Humanoïde",
+    hp: 4,
+    description: "Invock two diablotin in your side",
+    cost: 4,
+    abilities: [
+      {
+        description: "Invock two diablotin in your side",
+        invokeMinion: [
+          {
+            id: uuidv4(),
+            name: "Diablotin",
+            attack: 1,
+            type: "Demon",
+            hp: 2,
+            description: "Imp of the deep",
+            cost: 0,
+            abilities: [],
+          },
+          {
+            id: uuidv4(),
+            name: "Diablotin",
+            attack: 1,
+            type: "Demon",
+            hp: 2,
+            description: "Imp of the deep",
+            cost: 0,
+            abilities: [],
+          },
+        ],
       },
     ],
   },

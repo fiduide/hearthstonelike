@@ -21,7 +21,7 @@ export const CardManagerProvider = ({ children }) => {
   const handleCardClick = (card) => {
     if (card.hasAttacked && card.owner === currentPlayer.id) {
       writeBoardAction(
-        `La carte ${card.name} a déjà attaqué ce tour-ci`,
+        `La carte ${card.name} a déjà attaqué ce tour-ci ou vient d'être invoqué`,
         currentPlayer.id
       );
       return;
@@ -76,7 +76,6 @@ export const CardManagerProvider = ({ children }) => {
       if (isCardOwnedByOpponentInBoard) {
         if (selectedCard) {
           //attack
-          console.log("Attaque en cours");
           attackCardPlayer(selectedCard, card);
           setSelectedCard(null);
         }
@@ -99,7 +98,7 @@ export const CardManagerProvider = ({ children }) => {
     defenderCard.hp -= damage;
 
     writeBoardAction(
-      `${currentPlayer.id} attaque la carte de l'adversaire`,
+      `Attaque (${defenderCard.name}) de l'adversaire`,
       currentPlayer.id
     );
 
@@ -126,25 +125,48 @@ export const CardManagerProvider = ({ children }) => {
   };
 
   const invokeCard = (card) => {
+    card = { ...card, hasAttacked: true };
+
     currentPlayer.currentMana -= card.cost;
     currentPlayer.hand = currentPlayer.hand.filter(
       (cardHand) => cardHand.id !== card.id
     );
 
-    const updatedCardsInPlay = [...cardsInPlay, { ...card, hasAttacked: true }];
-    setCardsInPlay(updatedCardsInPlay);
+    const updatedCardsInPlay = [...cardsInPlay, card];
 
-    writeBoardAction(
-      `${currentPlayer.id} joue la carte ${card.name}`,
-      currentPlayer.id
-    );
+    writeBoardAction(`Invoque la carte ${card.name}`, currentPlayer.id);
+    let cardToInvoke;
 
     card.abilities.forEach((ability) => {
       if (ability.useAbility) {
-        ability.useAbility(currentPlayer, card);
+        ability.useAbility(currentPlayer, card, cardsInPlay);
       }
+
+      if (ability.invokeMinion) {
+        cardToInvoke = invokeMinion(updatedCardsInPlay, ability.invokeMinion);
+      }
+
       writeBoardAction(`${ability.description}`, currentPlayer.id);
     });
+
+    setCardsInPlay(
+      cardToInvoke === undefined ? updatedCardsInPlay : cardToInvoke
+    );
+  };
+
+  const invokeMinion = (updatedCardsInPlay, minions) => {
+    const cardsInPlayUpated = [...updatedCardsInPlay];
+    minions.forEach((minion) => {
+      let card = { ...minion, owner: currentPlayer.id, hasAttacked: true };
+      cardsInPlayUpated.push(card);
+      card.abilities.forEach((ability) => {
+        if (ability.useAbility) {
+          ability.useAbility(currentPlayer, card);
+        }
+      });
+    });
+
+    return cardsInPlayUpated;
   };
 
   const handleEndTurnClick = () => {
@@ -159,6 +181,7 @@ export const CardManagerProvider = ({ children }) => {
     setCardsInPlay(updatedCardsInPlay);
     setSelectedCard(null);
     endTurn();
+    drawCard(currentPlayer.id === "player" ? computer : player);
   };
   const onPlayerClick = (e, idPlayer) => {
     if (selectedCard) {
@@ -189,6 +212,19 @@ export const CardManagerProvider = ({ children }) => {
     }
 
     setSelectedCard(null);
+  };
+
+  const drawCard = (player) => {
+    if (player.deck.length > 0) {
+      const drawnCard =
+        player.deck[Math.floor(Math.random() * player.deck.length)];
+      // Enlevez la carte du paquet
+      player.deck = player.deck.filter((card) => card !== drawnCard);
+      player.hand = [...player.hand, drawnCard];
+      writeBoardAction(`Je pioche une carte`, player.id);
+    } else {
+      player.hp -= 1;
+    }
   };
 
   //COMPUTER SYSTEM
@@ -269,8 +305,8 @@ export const CardManagerProvider = ({ children }) => {
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
     endTurn();
+    drawCard(player);
   };
-
   useEffect(() => {
     if (currentPlayer.id === "computer") {
       handleComputerTurn();

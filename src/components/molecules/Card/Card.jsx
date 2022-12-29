@@ -1,6 +1,8 @@
 import CardStyled from "./CardStyled.styled";
 
-import { useSpring, animated, config } from "react-spring";
+import { useSpring, animated } from "react-spring";
+import cardBg from "assets/images/cards.png";
+
 import { useRef } from "react";
 
 const Card = (props) => {
@@ -61,7 +63,7 @@ const Card = (props) => {
       id={id}
       onClick={() => onCardClick(props)}
     >
-      <CardStyled selectedCard={selectedCard}>
+      <CardStyled bg={cardBg} selectedCard={selectedCard}>
         <div className="card-text name">{name}</div>
         <div className="card-description">{description}</div>
         <div className="card-stats">

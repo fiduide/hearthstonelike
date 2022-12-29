@@ -2,10 +2,9 @@ import styled from "styled-components";
 
 const CardStyled = styled.div`
   // Couleurs de base pour les cartes
-  background-image: url("assets/images/cards.png");
+  background-image: url(${(props) => props.bg});
   background-repeat: no-repeat;
   background-size: contain;
-
   height: 200px;
   width: 150px;
   position: relative;

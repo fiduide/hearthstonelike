@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const PlayerStyled = styled.div`
-  background-image: url("assets/images/rock.png");
+  background-image: url(${(props) => props.bg});
   background-repeat: no-repeat;
   background-size: cover;
   width: fit-content;

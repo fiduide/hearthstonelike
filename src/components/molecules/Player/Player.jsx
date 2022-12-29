@@ -1,6 +1,7 @@
 import { ProgressBar } from "components/atoms";
 import { Card } from "../Card";
 import PlayerStyled from "./PlayerStyled.styled";
+import rockTexture from "assets/images/rock.png";
 
 const Player = ({
   id,
@@ -16,7 +17,7 @@ const Player = ({
   onPlayerClick,
 }) => {
   return (
-    <PlayerStyled className={`player-${id}`}>
+    <PlayerStyled bg={rockTexture} className={`player-${id}`}>
       <div className="blockHp" onClick={(e) => onPlayerClick(e, id)}>
         <div className="player-name">{name}</div>
         <div className="player-hp">

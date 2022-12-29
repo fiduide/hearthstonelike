@@ -5,6 +5,10 @@ import { CardManagerContext } from "context/cardManagerContext";
 import { PlayerManagerContext } from "context/playerManagerContext";
 import { useContext, useEffect, useState } from "react";
 import BoardStyled from "./BoardStyled.styled";
+import woodBg from "assets/images/wood.png";
+import ambre from "assets/images/button/ambre.jpg";
+import ambreGray from "assets/images/button/ambre-gray.jpg";
+import { Death } from "components/molecules/Death";
 
 const Board = () => {
   const { computer, player, currentPlayer, playerDeath } =
@@ -22,10 +26,14 @@ const Board = () => {
   if (currentPlayer.length === 0) {
     return <Loader />;
   } else if (playerDeath) {
-    return <p>Player mort</p>;
+    return <Death currentPlayer={currentPlayer} />;
   } else {
     return (
-      <BoardStyled currentPlayer={currentPlayer.id}>
+      <BoardStyled
+        buttonBg={currentPlayer.id === "player" ? ambre : ambreGray}
+        bg={woodBg}
+        currentPlayer={currentPlayer.id}
+      >
         <div className="current-player">
           <p>Current player : {currentPlayer.id}</p>
         </div>

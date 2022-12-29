@@ -61,7 +61,7 @@ export const generateRandomDeck = (owner) => {
 
 export const writeBoardAction = (action, player) => {
   let p = document.createElement("p");
-  p.innerHTML = "[player] : " + action;
+  p.innerHTML = `[${player}] : ${action}`;
 
   if (player === "player") {
     p.style.backgroundColor = "blue";
