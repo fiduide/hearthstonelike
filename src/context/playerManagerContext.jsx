@@ -25,7 +25,7 @@ export const PlayerManagerProvider = ({ children }) => {
           deck: generateRandomDeck("computer"),
           currentMana: 5,
           maxMana: 5,
-          hp: 1,
+          hp: 30,
           maxHp: 30,
         });
       }
@@ -38,7 +38,7 @@ export const PlayerManagerProvider = ({ children }) => {
           deck: generateRandomDeck("player"),
           currentMana: 5,
           maxMana: 5,
-          hp: 1,
+          hp: 30,
           maxHp: 30,
         });
       }
