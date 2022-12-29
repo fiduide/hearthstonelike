@@ -7,7 +7,7 @@ const cards = [
     type: "Humanoid",
     hp: 10,
     description: "Give 5HP to owner",
-    cost: 2,
+    cost: 8,
     abilities: [
       {
         description: "Heals the owner for 5 health.",

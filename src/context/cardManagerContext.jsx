@@ -111,7 +111,8 @@ export const CardManagerProvider = ({ children }) => {
           defenderCard.owner
         );
         return null;
-      } else if (card.id === attackerCard.id && attackerCard.hp <= 0) {
+      }
+      if (card.id === attackerCard.id && attackerCard.hp <= 0) {
         writeBoardAction(
           `La carte ${attackerCard.name} est détruite`,
           attackerCard.owner
