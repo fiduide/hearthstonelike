@@ -35,8 +35,8 @@ export const PlayerManagerProvider = ({ children }) => {
           name: "Bob",
           hand: generateRandomHand("player"),
           deck: generateRandomDeck("player"),
-          currentMana: 5,
-          maxMana: 5,
+          currentMana: 10,
+          maxMana: 10,
           hp: 30,
           maxHp: 30,
         });

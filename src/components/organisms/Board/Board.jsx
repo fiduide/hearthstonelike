@@ -23,6 +23,14 @@ const Board = () => {
     isAttacking,
   } = useContext(CardManagerContext);
 
+  const computerCardsInPlay = cardsInPlay.filter(
+    (card) => card.owner === "computer"
+  );
+
+  const playerCardsInPlay = cardsInPlay.filter(
+    (card) => card.owner === "player"
+  );
+
   if (currentPlayer.length === 0) {
     return <Loader />;
   } else if (playerDeath) {
@@ -47,47 +55,43 @@ const Board = () => {
         </div>
         <div id="boardGame" className="box-card">
           <div className="board-card ">
-            {cardsInPlay.map(
-              (card) =>
-                card.owner === "computer" && (
-                  <Card
-                    selectedCard={selectedCard && selectedCard.id === card.id}
-                    isAttacking={
-                      selectedCard &&
-                      selectedCard.id === card.id &&
-                      isAttacking &&
-                      isAttacking.boolean
-                        ? isAttacking
-                        : null
-                    }
-                    key={card.id}
-                    {...card}
-                    onCardClick={() => handleCardClick(card)}
-                  />
-                )
-            )}
+            {computerCardsInPlay &&
+              computerCardsInPlay.map((card) => (
+                <Card
+                  selectedCard={selectedCard && selectedCard.id === card.id}
+                  isAttacking={
+                    selectedCard &&
+                    selectedCard.id === card.id &&
+                    isAttacking &&
+                    isAttacking.boolean
+                      ? isAttacking
+                      : null
+                  }
+                  key={card.id}
+                  {...card}
+                  onCardClick={() => handleCardClick(card)}
+                />
+              ))}
           </div>
           <hr />
           <div className="board-card">
-            {cardsInPlay.map(
-              (card) =>
-                card.owner === "player" && (
-                  <Card
-                    selectedCard={selectedCard && selectedCard.id === card.id}
-                    isAttacking={
-                      selectedCard &&
-                      selectedCard.id === card.id &&
-                      isAttacking &&
-                      isAttacking.boolean
-                        ? isAttacking
-                        : null
-                    }
-                    key={card.id}
-                    {...card}
-                    onCardClick={() => handleCardClick(card)}
-                  />
-                )
-            )}
+            {playerCardsInPlay &&
+              playerCardsInPlay.map((card) => (
+                <Card
+                  selectedCard={selectedCard && selectedCard.id === card.id}
+                  isAttacking={
+                    selectedCard &&
+                    selectedCard.id === card.id &&
+                    isAttacking &&
+                    isAttacking.boolean
+                      ? isAttacking
+                      : null
+                  }
+                  key={card.id}
+                  {...card}
+                  onCardClick={() => handleCardClick(card)}
+                />
+              ))}
           </div>
         </div>
         <div className="container-player">

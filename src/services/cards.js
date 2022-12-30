@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
-
 const cards = [
   {
     name: "Clerc",
@@ -11,7 +9,7 @@ const cards = [
     abilities: [
       {
         description: "Heals the owner for 5 health.",
-        useAbility: (currentPlayer) => {
+        invokedAbility: (currentPlayer) => {
           if (currentPlayer) {
             currentPlayer.hp += 5;
             if (currentPlayer.hp > 30) {
@@ -42,7 +40,7 @@ const cards = [
     abilities: [
       {
         description: "Can attack direcly when is invoke",
-        useAbility: (currentPlayer, card) => {
+        invokedAbility: (currentPlayer, card) => {
           if (currentPlayer) {
             card.hasAttacked = false;
           }
@@ -60,7 +58,7 @@ const cards = [
     abilities: [
       {
         description: "Give +2 Attack in two random card",
-        useAbility: (currentPlayer) => {
+        invokedAbility: (currentPlayer) => {
           if (currentPlayer) {
             for (let index = 0; index < 2; index++) {
               let cardSelected =
@@ -86,7 +84,6 @@ const cards = [
         description: "Summon two diablotin in your side",
         invokeMinion: [
           {
-            id: uuidv4(),
             name: "Diablotin",
             attack: 1,
             type: "Demon",
@@ -96,7 +93,6 @@ const cards = [
             abilities: [],
           },
           {
-            id: uuidv4(),
             name: "Diablotin",
             attack: 1,
             type: "Demon",
@@ -130,7 +126,6 @@ const cards = [
         description: "Summon two undead in your side",
         invokeMinion: [
           {
-            id: uuidv4(),
             name: "Undead",
             attack: 1,
             type: "Undead",
@@ -140,7 +135,6 @@ const cards = [
             abilities: [],
           },
           {
-            id: uuidv4(),
             name: "Undead",
             attack: 1,
             type: "Undead",
@@ -165,12 +159,11 @@ const cards = [
         description: "Summon the Sword of Illidan",
         invokeMinion: [
           {
-            id: uuidv4(),
             name: "Flame of Azzinoth",
             attack: 2,
             type: "Weapon",
             hp: 1,
-            description: "Resurrected by Sylvanas",
+            description: "Glaives of Illidan",
             cost: 0,
             abilities: [],
           },
@@ -206,7 +199,7 @@ const cards = [
     abilities: [
       {
         description: "Gains +1/+1 for each Humanoid on the board",
-        useAbility: (currentPlayer, card, cardsInPlay) => {
+        invokedAbility: (currentPlayer, card, cardsInPlay) => {
           if (currentPlayer) {
             const HumanoidCards = cardsInPlay.filter(
               (card) => card.type === "Humanoid"
@@ -216,6 +209,61 @@ const cards = [
               card.hp += 1;
               card.attack += 1;
             });
+          }
+        },
+      },
+    ],
+  },
+  {
+    name: "Lich Kings",
+    attack: 8,
+    type: "Undead",
+    hp: 8,
+    cost: 8,
+    description:
+      "Provocation: At the end of your turn, add a random Death Knight card to your hand",
+    abilities: [
+      {
+        description:
+          "At the end of your turn, add a random Death Knight card to your hand",
+        invokeEndMinion: [
+          {
+            name: "Death knight",
+            attack: 2,
+            type: "Undead",
+            hp: 1,
+            description: "Called by Lich Kings",
+            cost: 0,
+            abilities: [],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Gamon",
+    attack: 6,
+    type: "Humanoid",
+    hp: 6,
+    cost: 10,
+    description: "I Gamon i will save us.",
+    abilities: [],
+  },
+  {
+    name: "Deathwing",
+    attack: 12,
+    type: "Dragon",
+    hp: 12,
+    cost: 10,
+    description:
+      "Battle Cry: Destroys all other servants and discards your hand.",
+    abilities: [
+      {
+        description: "Destroys all other servants and discards your hand.",
+        invokedAbility: (currentPlayer, card, cardsInPlay, setCardsInPlay) => {
+          if (currentPlayer) {
+            currentPlayer.hand = [];
+            setCardsInPlay([]);
           }
         },
       },

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { PlayerManagerContext } from "./playerManagerContext";
 import { writeBoardAction } from "services/helpers";
+import { v4 as uuidv4 } from "uuid";
 
 export const CardManagerContext = createContext(false);
 
@@ -92,35 +93,22 @@ export const CardManagerProvider = ({ children }) => {
   const attackCardPlayer = (attackerCard, defenderCard) => {
     setIsAttacking(true);
 
-    const damage = attackerCard.attack;
-
-    attackerCard.hp -= defenderCard.attack;
-    defenderCard.hp -= damage;
-
-    writeBoardAction(
-      `Attaque (${defenderCard.name}) de l'adversaire`,
-      currentPlayer.id
-    );
-
-    attackerCard.hasAttacked = true;
-
     const updatedCardsInPlay = cardsInPlay.map((card) => {
-      if (card.id === defenderCard.id && defenderCard.hp <= 0) {
-        writeBoardAction(
-          `La carte ${defenderCard.name} est détruite`,
-          defenderCard.owner
-        );
+      if (card.id === attackerCard.id) {
+        card.hp -= defenderCard.attack;
+        card.hasAttacked = true;
+      } else if (card.id === defenderCard.id) {
+        card.hp -= attackerCard.attack;
+      }
+
+      if (card.hp <= 0) {
+        writeBoardAction(`La carte ${card.name} est détruite`, card.owner);
         return null;
       }
-      if (card.id === attackerCard.id && attackerCard.hp <= 0) {
-        writeBoardAction(
-          `La carte ${attackerCard.name} est détruite`,
-          attackerCard.owner
-        );
-        return null;
-      }
+
       return card;
     });
+
     setIsAttacking(false);
     setCardsInPlay(updatedCardsInPlay.filter((card) => card));
   };
@@ -133,57 +121,96 @@ export const CardManagerProvider = ({ children }) => {
       (cardHand) => cardHand.id !== card.id
     );
 
-    const updatedCardsInPlay = [...cardsInPlay, card];
+    let updatedCardsInPlay = [...cardsInPlay, card];
 
     writeBoardAction(`Invoque la carte ${card.name}`, currentPlayer.id);
-    let cardToInvoke;
 
-    card.abilities.forEach((ability) => {
-      if (ability.useAbility) {
-        ability.useAbility(currentPlayer, card, updatedCardsInPlay);
+    card.abilities.forEach(async (ability) => {
+      if (ability.invokedAbility) {
+        ability.invokedAbility(currentPlayer, card, updatedCardsInPlay);
       }
 
       if (ability.invokeMinion) {
-        cardToInvoke = invokeMinion(updatedCardsInPlay, ability.invokeMinion);
+        updatedCardsInPlay = await invokeMinion(
+          updatedCardsInPlay,
+          ability.invokeMinion,
+          true
+        );
+        setCardsInPlay(updatedCardsInPlay);
       }
 
       writeBoardAction(`${ability.description}`, currentPlayer.id);
     });
 
-    setCardsInPlay(
-      cardToInvoke === undefined ? updatedCardsInPlay : cardToInvoke
-    );
+    setCardsInPlay(updatedCardsInPlay);
   };
 
-  const invokeMinion = (updatedCardsInPlay, minions) => {
-    const cardsInPlayUpated = [...updatedCardsInPlay];
+  // const StartTurnAbility = () => {
+  //   const currentPlayerCardsInPlay = cardsInPlay.filter(
+  //     (card) => card.owner === currentPlayer.id
+  //   );
+  // };
+
+  const EndTurnAbility = async (callback) => {
+    if (cardsInPlay.length !== 0) {
+      const currentPlayerCardsInPlay = cardsInPlay.filter(
+        (card) => card.owner === currentPlayer.id
+      );
+
+      if (currentPlayerCardsInPlay.length !== 0) {
+        currentPlayerCardsInPlay.map(async (card) => {
+          card.hasAttacked = false;
+          if (card.abilities.length !== 0) {
+            card.abilities.map(async (ability) => {
+              if (ability.invokeEndMinion) {
+                const updatedCardsInPlay = await invokeMinion(
+                  cardsInPlay,
+                  ability.invokeEndMinion,
+                  false
+                );
+                setCardsInPlay(updatedCardsInPlay);
+              }
+            });
+          }
+        });
+      }
+    }
+    callback();
+  };
+
+  const invokeMinion = async (updatedCardsInPlay, minions, hasAttacked) => {
+    const cardsInPlayUpdated = [...updatedCardsInPlay];
     minions.forEach((minion) => {
-      let card = { ...minion, owner: currentPlayer.id, hasAttacked: true };
-      cardsInPlayUpated.push(card);
+      let card = {
+        ...minion,
+        owner: currentPlayer.id,
+        hasAttacked: hasAttacked,
+        id: uuidv4(),
+      };
+      cardsInPlayUpdated.push(card);
+
       card.abilities.forEach((ability) => {
-        if (ability.useAbility) {
-          ability.useAbility(currentPlayer, card);
+        if (ability.invokedAbility) {
+          ability.invokedAbility(currentPlayer, card);
         }
       });
     });
 
-    return cardsInPlayUpated;
+    return cardsInPlayUpdated;
   };
 
   const handleEndTurnClick = () => {
     resetTurn();
   };
 
-  const resetTurn = () => {
-    const updatedCardsInPlay = cardsInPlay.map((card) => ({
-      ...card,
-      hasAttacked: false,
-    }));
-    setCardsInPlay(updatedCardsInPlay);
-    setSelectedCard(null);
-    endTurn();
-    drawCard(currentPlayer.id === "player" ? computer : player);
+  const resetTurn = async () => {
+    await EndTurnAbility(() => {
+      setSelectedCard(null);
+      endTurn();
+      drawCard(currentPlayer.id === "player" ? computer : player);
+    });
   };
+
   const onPlayerClick = (e, idPlayer) => {
     if (selectedCard) {
       if (!cardsInPlay.some((card) => card.owner !== currentPlayer.id)) {
@@ -305,9 +332,12 @@ export const CardManagerProvider = ({ children }) => {
       }
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    endTurn();
-    drawCard(player);
+    EndTurnAbility(() => {
+      endTurn();
+      drawCard(player);
+    });
   };
+
   useEffect(() => {
     if (currentPlayer.id === "computer") {
       handleComputerTurn();
