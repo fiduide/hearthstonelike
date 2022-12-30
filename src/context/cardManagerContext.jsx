@@ -115,38 +115,6 @@ export const CardManagerProvider = ({ children }) => {
     setCardsInPlay(updatedCardsInPlay.filter((card) => card));
   };
 
-  // const invokeCard = (card) => {
-  //   card = { ...card, hasAttacked: true };
-
-  //   currentPlayer.currentMana -= card.cost;
-  //   currentPlayer.hand = currentPlayer.hand.filter(
-  //     (cardHand) => cardHand.id !== card.id
-  //   );
-
-  //   let updatedCardsInPlay = [...cardsInPlay, card];
-
-  //   writeBoardAction(`Invoque la carte ${card.name}`, currentPlayer.id);
-
-  //   card.abilities.forEach(async (ability) => {
-  //     if (ability.invokedAbility) {
-  //       ability.invokedAbility(currentPlayer, card, cardsInPlay, resetBoard);
-  //     }
-
-  //     if (ability.invokeMinion) {
-  //       updatedCardsInPlay = await invokeMinion(
-  //         updatedCardsInPlay,
-  //         ability.invokeMinion,
-  //         true
-  //       );
-  //       setCardsInPlay(updatedCardsInPlay);
-  //     }
-
-  //     writeBoardAction(`${ability.description}`, currentPlayer.id);
-  //   });
-
-  //   setCardsInPlay(updatedCardsInPlay);
-  // };
-
   const invokeCard = async (card) => {
     card = { ...card, hasAttacked: true };
 
@@ -157,9 +125,11 @@ export const CardManagerProvider = ({ children }) => {
 
     writeBoardAction(`Invoque la carte ${card.name}`, currentPlayer.id);
 
-    card.abilities.forEach(async (ability) => {
-      await abilityCard(card, ability);
-    });
+    if (card.abilities && card.abilities.length !== 0) {
+      card.abilities.forEach(async (ability) => {
+        await abilityCard(card, ability);
+      });
+    }
 
     let updatedCardsInPlay = [...cardsInPlay, card];
     setCardsInPlay(updatedCardsInPlay);
