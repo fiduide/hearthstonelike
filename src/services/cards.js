@@ -301,8 +301,70 @@ const cards = [
       },
     ],
   },
+  {
+    name: "Leeroy",
+    attack: 5,
+    type: "Humanoïde",
+    hp: 1,
+    cost: 4,
+    description: "Summon 3 dragonet eggs, the card dies on the next turn.",
+    abilities: [
+      {
+        id: "summonInvoke",
+        invokeMinion: [
+          {
+            name: "Dragonfly egg",
+            attack: 0,
+            type: "Dragon",
+            hp: 1,
+            cost: 1,
+            description: "Splinter in the next round",
+          },
+          {
+            name: "Dragonfly egg",
+            attack: 0,
+            type: "Dragon",
+            hp: 1,
+            cost: 1,
+            description: "Splinter in the next round",
+          },
+          {
+            name: "Dragonfly egg",
+            attack: 0,
+            type: "Dragon",
+            hp: 1,
+            cost: 1,
+            description: "Splinter in the next round",
+          },
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Dragonfly egg",
+    attack: 0,
+    type: "Dragon",
+    hp: 1,
+    cost: 1,
+    description: "Splinter in the next round",
+  },
+
+  {
+    name: "Dragonfly",
+    attack: 2,
+    type: "Dragon",
+    hp: 3,
+    cost: 2,
+    description: "",
+  },
 ];
 
 export const getCards = () => {
   return cards;
+};
+
+export const getCardWithName = (name) => {
+  let card = cards.filter((card) => card.name === name);
+  return card;
 };

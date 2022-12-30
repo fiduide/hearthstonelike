@@ -70,6 +70,7 @@ export const PlayerManagerProvider = ({ children }) => {
         computer,
         player,
         currentPlayer,
+        setCurrentPlayer,
         endTurn,
         playerDeath,
         setPlayerDeath,

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { PlayerManagerContext } from "./playerManagerContext";
 import { writeBoardAction } from "services/helpers";
 import { v4 as uuidv4 } from "uuid";
+import { getCardWithName } from "services/cards";
 
 export const CardManagerContext = createContext(false);
 
@@ -10,6 +11,7 @@ export const CardManagerProvider = ({ children }) => {
     computer,
     player,
     currentPlayer,
+    setCurrentPlayer,
     endTurn,
     playerDeath,
     setPlayerDeath,
@@ -258,11 +260,13 @@ export const CardManagerProvider = ({ children }) => {
       };
       cardsInPlayUpdated.push(card);
 
-      card.abilities.forEach((ability) => {
-        if (ability.invokedAbility) {
-          ability.invokedAbility(currentPlayer, card);
-        }
-      });
+      if (card.abilities) {
+        card.abilities.forEach((ability) => {
+          if (ability.invokedAbility) {
+            ability.invokedAbility(currentPlayer, card);
+          }
+        });
+      }
     });
 
     return cardsInPlayUpdated;
@@ -413,6 +417,21 @@ export const CardManagerProvider = ({ children }) => {
     }
   }, [currentPlayer]);
 
+  const handleClickGiveButton = () => {
+    const card = getCardWithName("Leeroy");
+    let oneCard = card[0];
+    console.log(oneCard);
+    currentPlayer.hand = [
+      ...currentPlayer.hand,
+      {
+        ...oneCard,
+        owner: "player",
+        hasAttacked: false,
+        id: uuidv4(),
+      },
+    ];
+  };
+
   return (
     <CardManagerContext.Provider
       value={{
@@ -423,6 +442,7 @@ export const CardManagerProvider = ({ children }) => {
         cardsInPlay,
         isAttacking,
         playerDeath,
+        handleClickGiveButton,
       }}
     >
       {children}
