@@ -55,12 +55,12 @@ const cards = [
     ],
   },
   {
-    name: "Demoniste",
-    attack: 2,
-    type: "Humanoid",
-    hp: 4,
-    description: "Summon two diablotin in your side",
-    cost: 4,
+    name: "Gull’dan",
+    attack: 3,
+    type: "Orc",
+    hp: 5,
+    description: "Summon two diablotin in your side 1/2",
+    cost: 6,
     abilities: [
       {
         id: "summonInvoke",
@@ -87,6 +87,47 @@ const cards = [
         ],
       },
     ],
+  },
+  {
+    name: "Diablotin of Fire",
+    attack: 3,
+    type: "Demon",
+    hp: 3,
+    cost: 3,
+    description: "Imp of the hell",
+  },
+  {
+    name: "Skoll",
+    attack: 3,
+    type: "Creature",
+    hp: 2,
+    cost: 2,
+    description: "",
+  },
+  {
+    name: "Gara",
+    attack: 2,
+    type: "Creature",
+    hp: 4,
+    cost: 3,
+    description: "",
+  },
+  {
+    name: "Thok the bloodthirsty",
+    attack: 6,
+    type: "Creature",
+    hp: 3,
+    cost: 3,
+    description: "",
+  },
+
+  {
+    name: "Diablotin",
+    attack: 2,
+    type: "Demon",
+    hp: 3,
+    cost: 2,
+    description: "Imp of the deep",
   },
   {
     name: "Murloc",
@@ -243,6 +284,20 @@ const cards = [
       {
         id: "discardHand",
         description: "discards your hand",
+      },
+    ],
+  },
+  {
+    name: "The butcher",
+    attack: 6,
+    type: "Orc",
+    hp: 7,
+    cost: 8,
+    description: "Can attack direcly",
+    abilities: [
+      {
+        id: "charge",
+        description: "Can attack direcly",
       },
     ],
   },
