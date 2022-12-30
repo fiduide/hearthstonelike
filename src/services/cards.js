@@ -8,15 +8,9 @@ const cards = [
     cost: 8,
     abilities: [
       {
+        id: "healCurrentPlayer",
         description: "Heals the owner for 5 health.",
-        invokedAbility: (currentPlayer) => {
-          if (currentPlayer) {
-            currentPlayer.hp += 5;
-            if (currentPlayer.hp > 30) {
-              currentPlayer.maxHp = currentPlayer.hp;
-            }
-          }
-        },
+        heal: 5,
       },
     ],
   },
@@ -39,12 +33,8 @@ const cards = [
     cost: 1,
     abilities: [
       {
+        id: "charge",
         description: "Can attack direcly when is invoke",
-        invokedAbility: (currentPlayer, card) => {
-          if (currentPlayer) {
-            card.hasAttacked = false;
-          }
-        },
       },
     ],
   },
@@ -57,18 +47,10 @@ const cards = [
     cost: 4,
     abilities: [
       {
+        id: "giveAttackCardInHand",
         description: "Give +2 Attack in two random card",
-        invokedAbility: (currentPlayer) => {
-          if (currentPlayer) {
-            for (let index = 0; index < 2; index++) {
-              let cardSelected =
-                currentPlayer.hand[
-                  Math.floor(Math.random() * currentPlayer.hand.length)
-                ];
-              cardSelected.attack += 2;
-            }
-          }
-        },
+        attack: 2,
+        length: 2,
       },
     ],
   },
@@ -81,6 +63,7 @@ const cards = [
     cost: 4,
     abilities: [
       {
+        id: "summonInvoke",
         description: "Summon two diablotin in your side",
         invokeMinion: [
           {
@@ -123,6 +106,7 @@ const cards = [
     description: "Summon 2 undead 2/1",
     abilities: [
       {
+        id: "summonInvoke",
         description: "Summon two undead in your side",
         invokeMinion: [
           {
@@ -156,6 +140,7 @@ const cards = [
     description: "Summon one Flame of Azzinoth 2/1",
     abilities: [
       {
+        id: "summonInvoke",
         description: "Summon the Sword of Illidan",
         invokeMinion: [
           {
@@ -198,19 +183,11 @@ const cards = [
     description: "Gains +1/+1 for each Humanoid on the board",
     abilities: [
       {
+        id: "giveToCardWhenTypeInBoard",
         description: "Gains +1/+1 for each Humanoid on the board",
-        invokedAbility: (currentPlayer, card, cardsInPlay) => {
-          if (currentPlayer) {
-            const HumanoidCards = cardsInPlay.filter(
-              (card) => card.type === "Humanoid"
-            );
-
-            HumanoidCards.forEach((element) => {
-              card.hp += 1;
-              card.attack += 1;
-            });
-          }
-        },
+        attack: 1,
+        hp: 1,
+        when: "Humanoid",
       },
     ],
   },
@@ -224,6 +201,7 @@ const cards = [
       "Provocation: At the end of your turn, add a random Death Knight card to your hand",
     abilities: [
       {
+        id: "summonEndTurn",
         description:
           "At the end of your turn, add a random Death Knight card to your hand",
         invokeEndMinion: [
@@ -259,13 +237,12 @@ const cards = [
       "Battle Cry: Destroys all other servants and discards your hand.",
     abilities: [
       {
-        description: "Destroys all other servants and discards your hand.",
-        invokedAbility: (currentPlayer, card, cardsInPlay, setCardsInPlay) => {
-          if (currentPlayer) {
-            currentPlayer.hand = [];
-            setCardsInPlay([]);
-          }
-        },
+        id: "resetBoard",
+        description: "Destroys all other servants and .",
+      },
+      {
+        id: "discardHand",
+        description: "discards your hand",
       },
     ],
   },

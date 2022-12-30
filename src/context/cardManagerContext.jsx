@@ -113,7 +113,39 @@ export const CardManagerProvider = ({ children }) => {
     setCardsInPlay(updatedCardsInPlay.filter((card) => card));
   };
 
-  const invokeCard = (card) => {
+  // const invokeCard = (card) => {
+  //   card = { ...card, hasAttacked: true };
+
+  //   currentPlayer.currentMana -= card.cost;
+  //   currentPlayer.hand = currentPlayer.hand.filter(
+  //     (cardHand) => cardHand.id !== card.id
+  //   );
+
+  //   let updatedCardsInPlay = [...cardsInPlay, card];
+
+  //   writeBoardAction(`Invoque la carte ${card.name}`, currentPlayer.id);
+
+  //   card.abilities.forEach(async (ability) => {
+  //     if (ability.invokedAbility) {
+  //       ability.invokedAbility(currentPlayer, card, cardsInPlay, resetBoard);
+  //     }
+
+  //     if (ability.invokeMinion) {
+  //       updatedCardsInPlay = await invokeMinion(
+  //         updatedCardsInPlay,
+  //         ability.invokeMinion,
+  //         true
+  //       );
+  //       setCardsInPlay(updatedCardsInPlay);
+  //     }
+
+  //     writeBoardAction(`${ability.description}`, currentPlayer.id);
+  //   });
+
+  //   setCardsInPlay(updatedCardsInPlay);
+  // };
+
+  const invokeCard = async (card) => {
     card = { ...card, hasAttacked: true };
 
     currentPlayer.currentMana -= card.cost;
@@ -121,28 +153,65 @@ export const CardManagerProvider = ({ children }) => {
       (cardHand) => cardHand.id !== card.id
     );
 
-    let updatedCardsInPlay = [...cardsInPlay, card];
-
     writeBoardAction(`Invoque la carte ${card.name}`, currentPlayer.id);
 
     card.abilities.forEach(async (ability) => {
-      if (ability.invokedAbility) {
-        ability.invokedAbility(currentPlayer, card, updatedCardsInPlay);
-      }
+      await abilityCard(card, ability);
+    });
 
-      if (ability.invokeMinion) {
-        updatedCardsInPlay = await invokeMinion(
-          updatedCardsInPlay,
+    let updatedCardsInPlay = [...cardsInPlay, card];
+    setCardsInPlay(updatedCardsInPlay);
+  };
+
+  const abilityCard = async (card, ability) => {
+    switch (ability.id) {
+      case "resetBoard":
+        const newTab = [];
+        setCardsInPlay([...newTab, card]);
+        break;
+      case "discardHand":
+        currentPlayer.hand = [];
+        break;
+      case "giveToCardWhenTypeInBoard":
+        const whenTypeSearch = cardsInPlay.filter(
+          (card) => card.type === ability.when
+        );
+        whenTypeSearch.forEach((element) => {
+          card.hp += ability.hp;
+          card.attack += ability.attack;
+        });
+        break;
+      case "summonInvoke":
+        let updatedBoard = await invokeMinion(
+          cardsInPlay,
           ability.invokeMinion,
           true
         );
-        setCardsInPlay(updatedCardsInPlay);
-      }
+        setCardsInPlay([card, ...updatedBoard]);
+        break;
+      case "charge":
+        card.hasAttacked = false;
+        break;
+      case "giveAttackCardInHand":
+        for (let i = 0; i < ability.length; i++) {
+          let cardSelected =
+            currentPlayer.hand[
+              Math.floor(Math.random() * currentPlayer.hand.length)
+            ];
+          cardSelected.attack += ability.attack;
+        }
+        break;
+      case "healCurrentPlayer":
+        currentPlayer.hp += ability.heal;
+        if (currentPlayer.hp > 30) {
+          currentPlayer.maxHp = currentPlayer.hp;
+        }
+        break;
 
-      writeBoardAction(`${ability.description}`, currentPlayer.id);
-    });
-
-    setCardsInPlay(updatedCardsInPlay);
+      default:
+        break;
+    }
+    writeBoardAction(`${ability.description}`, currentPlayer.id);
   };
 
   // const StartTurnAbility = () => {
