@@ -125,8 +125,12 @@ export const CardManagerProvider = ({ children }) => {
 
     writeBoardAction(`Invoque la carte ${card.name}`, currentPlayer.id);
 
-    if (card.abilities && card.abilities.length !== 0) {
-      card.abilities.forEach(async (ability) => {
+    if (
+      card.abilities &&
+      card.abilities.invokeAbilities &&
+      card.abilities.invokeAbilities.length !== 0
+    ) {
+      card.abilities.invokeAbilities.forEach(async (ability) => {
         await abilityCard(card, ability);
       });
     }
@@ -154,15 +158,27 @@ export const CardManagerProvider = ({ children }) => {
         });
         break;
       case "summonInvoke":
-        let updatedBoard = await invokeMinion(
-          cardsInPlay,
-          ability.invokeMinion,
-          true
-        );
-        setCardsInPlay([card, ...updatedBoard]);
+        if (ability.end) {
+          let updatedBoard = await invokeMinion(
+            cardsInPlay,
+            ability.invokeMinion,
+            false
+          );
+          setCardsInPlay([...updatedBoard]);
+        } else {
+          let updatedBoard = await invokeMinion(
+            cardsInPlay,
+            ability.invokeMinion,
+            true
+          );
+          setCardsInPlay([card, ...updatedBoard]);
+        }
         break;
       case "charge":
         card.hasAttacked = false;
+        break;
+      case "deathCard":
+        removeCardFromBoard(card);
         break;
       case "giveAttackCardInHand":
         for (let i = 0; i < ability.length; i++) {
@@ -185,12 +201,36 @@ export const CardManagerProvider = ({ children }) => {
     }
     writeBoardAction(`${ability.description}`, currentPlayer.id);
   };
+  const removeCardFromBoard = (cardToRemove) => {
+    // Supprime la carte du board
+    const updatedCardsInPlay = [
+      ...cardsInPlay.filter((c) => c.id !== cardToRemove.id),
+    ];
+    setCardsInPlay(updatedCardsInPlay);
+  };
 
-  // const StartTurnAbility = () => {
-  //   const currentPlayerCardsInPlay = cardsInPlay.filter(
-  //     (card) => card.owner === currentPlayer.id
-  //   );
-  // };
+  const StartTurnAbility = (currentPlayer) => {
+    if (cardsInPlay.length !== 0) {
+      const currentPlayerCardsInPlay = cardsInPlay.filter(
+        (card) => card.owner === currentPlayer.id
+      );
+
+      if (currentPlayerCardsInPlay.length !== 0) {
+        currentPlayerCardsInPlay.map(async (card) => {
+          if (
+            card.abilities &&
+            card.abilities.startTurnAbilities &&
+            card.abilities.startTurnAbilities.length !== 0
+          ) {
+            console.log("J'invoque les abilities pour => " + card.name);
+            card.abilities.startTurnAbilities.forEach(async (ability) => {
+              await abilityCard(card, ability);
+            });
+          }
+        });
+      }
+    }
+  };
 
   const EndTurnAbility = async (callback) => {
     if (cardsInPlay.length !== 0) {
@@ -201,16 +241,13 @@ export const CardManagerProvider = ({ children }) => {
       if (currentPlayerCardsInPlay.length !== 0) {
         currentPlayerCardsInPlay.map(async (card) => {
           card.hasAttacked = false;
-          if (card.abilities.length !== 0) {
-            card.abilities.map(async (ability) => {
-              if (ability.invokeEndMinion) {
-                const updatedCardsInPlay = await invokeMinion(
-                  cardsInPlay,
-                  ability.invokeEndMinion,
-                  false
-                );
-                setCardsInPlay(updatedCardsInPlay);
-              }
+          if (
+            card.abilities &&
+            card.abilities.endTurnAbilities &&
+            card.abilities.endTurnAbilities.length !== 0
+          ) {
+            card.abilities.endTurnAbilities.forEach(async (ability) => {
+              await abilityCard(card, ability);
             });
           }
         });
@@ -251,6 +288,7 @@ export const CardManagerProvider = ({ children }) => {
       setSelectedCard(null);
       endTurn();
       drawCard(currentPlayer.id === "player" ? computer : player);
+      StartTurnAbility(currentPlayer.id === "player" ? computer : player);
     });
   };
 
@@ -342,7 +380,7 @@ export const CardManagerProvider = ({ children }) => {
           `J'invoque la carte (${cardToPlay.name})`,
           currentPlayer.id
         );
-        invokeCard(cardToPlay);
+        await invokeCard(cardToPlay);
       }
 
       if (playerHasCardsInPlay && attackableCards.length > 0) {
@@ -375,10 +413,12 @@ export const CardManagerProvider = ({ children }) => {
       }
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    EndTurnAbility(() => {
-      endTurn();
-      drawCard(player);
-    });
+    resetTurn();
+    // EndTurnAbility(() => {
+    //   endTurn();
+    //   drawCard(player);
+    //   StartTurnAbility(player);
+    // });
   };
 
   useEffect(() => {

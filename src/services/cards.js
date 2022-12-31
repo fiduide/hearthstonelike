@@ -6,13 +6,15 @@ const cards = [
     hp: 10,
     description: "Give 5HP to owner",
     cost: 8,
-    abilities: [
-      {
-        id: "healCurrentPlayer",
-        description: "Heals the owner for 5 health.",
-        heal: 5,
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "healCurrentPlayer",
+          description: "Heals the owner for 5 health.",
+          heal: 5,
+        },
+      ],
+    },
   },
 
   {
@@ -31,12 +33,14 @@ const cards = [
     description: "Can attack direcly",
     hp: 2,
     cost: 1,
-    abilities: [
-      {
-        id: "charge",
-        description: "Can attack direcly when is invoke",
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "charge",
+          description: "Can attack direcly when is invoke",
+        },
+      ],
+    },
   },
   {
     name: "Paladin",
@@ -45,14 +49,16 @@ const cards = [
     hp: 2,
     description: "Give +2 Attack in two random card in your hand",
     cost: 4,
-    abilities: [
-      {
-        id: "giveAttackCardInHand",
-        description: "Give +2 Attack in two random card",
-        attack: 2,
-        length: 2,
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "giveAttackCardInHand",
+          description: "Give +2 Attack in two random card",
+          attack: 2,
+          length: 2,
+        },
+      ],
+    },
   },
   {
     name: "Gull’dan",
@@ -61,32 +67,34 @@ const cards = [
     hp: 5,
     description: "Summon two diablotin in your side 1/2",
     cost: 6,
-    abilities: [
-      {
-        id: "summonInvoke",
-        description: "Summon two diablotin in your side",
-        invokeMinion: [
-          {
-            name: "Diablotin",
-            attack: 1,
-            type: "Demon",
-            hp: 2,
-            description: "Imp of the deep",
-            cost: 0,
-            abilities: [],
-          },
-          {
-            name: "Diablotin",
-            attack: 1,
-            type: "Demon",
-            hp: 2,
-            description: "Imp of the deep",
-            cost: 0,
-            abilities: [],
-          },
-        ],
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "summonInvoke",
+          description: "Summon two diablotin in your side",
+          invokeMinion: [
+            {
+              name: "Diablotin",
+              attack: 1,
+              type: "Demon",
+              hp: 2,
+              description: "Imp of the deep",
+              cost: 0,
+              abilities: [],
+            },
+            {
+              name: "Diablotin",
+              attack: 1,
+              type: "Demon",
+              hp: 2,
+              description: "Imp of the deep",
+              cost: 0,
+              abilities: [],
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     name: "Diablotin of Fire",
@@ -145,32 +153,34 @@ const cards = [
     hp: 4,
     cost: 6,
     description: "Summon 2 undead 2/1",
-    abilities: [
-      {
-        id: "summonInvoke",
-        description: "Summon two undead in your side",
-        invokeMinion: [
-          {
-            name: "Undead",
-            attack: 1,
-            type: "Undead",
-            hp: 2,
-            description: "Resurrected by Sylvanas",
-            cost: 0,
-            abilities: [],
-          },
-          {
-            name: "Undead",
-            attack: 1,
-            type: "Undead",
-            hp: 2,
-            description: "Resurrected by Sylvanas",
-            cost: 0,
-            abilities: [],
-          },
-        ],
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "summonInvoke",
+          description: "Summon two undead in your side",
+          invokeMinion: [
+            {
+              name: "Undead",
+              attack: 1,
+              type: "Undead",
+              hp: 2,
+              description: "Resurrected by Sylvanas",
+              cost: 0,
+              abilities: [],
+            },
+            {
+              name: "Undead",
+              attack: 1,
+              type: "Undead",
+              hp: 2,
+              description: "Resurrected by Sylvanas",
+              cost: 0,
+              abilities: [],
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     name: "Illidan",
@@ -179,23 +189,25 @@ const cards = [
     hp: 5,
     cost: 6,
     description: "Summon one Flame of Azzinoth 2/1",
-    abilities: [
-      {
-        id: "summonInvoke",
-        description: "Summon the Sword of Illidan",
-        invokeMinion: [
-          {
-            name: "Flame of Azzinoth",
-            attack: 2,
-            type: "Weapon",
-            hp: 1,
-            description: "Glaives of Illidan",
-            cost: 0,
-            abilities: [],
-          },
-        ],
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "summonInvoke",
+          description: "Summon the Sword of Illidan",
+          invokeMinion: [
+            {
+              name: "Flame of Azzinoth",
+              attack: 2,
+              type: "Weapon",
+              hp: 1,
+              description: "Glaives of Illidan",
+              cost: 0,
+              abilities: [],
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     name: "Raz the madman",
@@ -222,15 +234,17 @@ const cards = [
     hp: 1,
     cost: 5,
     description: "Gains +1/+1 for each Humanoid on the board",
-    abilities: [
-      {
-        id: "giveToCardWhenTypeInBoard",
-        description: "Gains +1/+1 for each Humanoid on the board",
-        attack: 1,
-        hp: 1,
-        when: "Humanoid",
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "giveToCardWhenTypeInBoard",
+          description: "Gains +1/+1 for each Humanoid on the board",
+          attack: 1,
+          hp: 1,
+          when: "Humanoid",
+        },
+      ],
+    },
   },
   {
     name: "Lich Kings",
@@ -240,24 +254,27 @@ const cards = [
     cost: 8,
     description:
       "Provocation: At the end of your turn, add a random Death Knight card to your hand",
-    abilities: [
-      {
-        id: "summonEndTurn",
-        description:
-          "At the end of your turn, add a random Death Knight card to your hand",
-        invokeEndMinion: [
-          {
-            name: "Death knight",
-            attack: 2,
-            type: "Undead",
-            hp: 1,
-            description: "Called by Lich Kings",
-            cost: 0,
-            abilities: [],
-          },
-        ],
-      },
-    ],
+    abilities: {
+      endTurnAbilities: [
+        {
+          id: "summonInvoke",
+          end: true,
+          description:
+            "At the end of your turn, add a random Death Knight card to your hand",
+          invokeMinion: [
+            {
+              name: "Death knight",
+              attack: 2,
+              type: "Undead",
+              hp: 1,
+              description: "Called by Lich Kings",
+              cost: 0,
+              abilities: [],
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     name: "Gamon",
@@ -276,16 +293,18 @@ const cards = [
     cost: 10,
     description:
       "Battle Cry: Destroys all other servants and discards your hand.",
-    abilities: [
-      {
-        id: "resetBoard",
-        description: "Destroys all other servants and .",
-      },
-      {
-        id: "discardHand",
-        description: "discards your hand",
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "resetBoard",
+          description: "Destroys all other servants and .",
+        },
+        {
+          id: "discardHand",
+          description: "discards your hand",
+        },
+      ],
+    },
   },
   {
     name: "The butcher",
@@ -294,12 +313,14 @@ const cards = [
     hp: 7,
     cost: 8,
     description: "Can attack direcly",
-    abilities: [
-      {
-        id: "charge",
-        description: "Can attack direcly",
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "charge",
+          description: "Can attack direcly",
+        },
+      ],
+    },
   },
   {
     name: "Leeroy",
@@ -308,37 +329,44 @@ const cards = [
     hp: 1,
     cost: 4,
     description: "Summon 3 dragonet eggs, the card dies on the next turn.",
-    abilities: [
-      {
-        id: "summonInvoke",
-        invokeMinion: [
-          {
-            name: "Dragonfly egg",
-            attack: 0,
-            type: "Dragon",
-            hp: 1,
-            cost: 1,
-            description: "Splinter in the next round",
-          },
-          {
-            name: "Dragonfly egg",
-            attack: 0,
-            type: "Dragon",
-            hp: 1,
-            cost: 1,
-            description: "Splinter in the next round",
-          },
-          {
-            name: "Dragonfly egg",
-            attack: 0,
-            type: "Dragon",
-            hp: 1,
-            cost: 1,
-            description: "Splinter in the next round",
-          },
-        ],
-      },
-    ],
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "summonInvoke",
+          invokeMinion: [
+            {
+              name: "Dragonfly egg",
+              attack: 0,
+              type: "Dragon",
+              hp: 1,
+              cost: 1,
+              description: "Splinter in the next round",
+            },
+            {
+              name: "Dragonfly egg",
+              attack: 0,
+              type: "Dragon",
+              hp: 1,
+              cost: 1,
+              description: "Splinter in the next round",
+            },
+            {
+              name: "Dragonfly egg",
+              attack: 0,
+              type: "Dragon",
+              hp: 1,
+              cost: 1,
+              description: "Splinter in the next round",
+            },
+          ],
+        },
+      ],
+      startTurnAbilities: [
+        {
+          id: "deathCard",
+        },
+      ],
+    },
   },
 
   {
