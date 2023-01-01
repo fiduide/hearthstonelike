@@ -20,6 +20,7 @@ const Board = () => {
     handleEndTurnClick,
     selectedCard,
     cardsInPlay,
+    setCardsInPlay,
     isAttacking,
     handleClickGiveButton,
   } = useContext(CardManagerContext);

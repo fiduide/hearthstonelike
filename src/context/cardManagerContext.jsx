@@ -2,24 +2,36 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { PlayerManagerContext } from "./playerManagerContext";
 import { writeBoardAction } from "services/helpers";
 import { v4 as uuidv4 } from "uuid";
-import { getCardWithName } from "services/cards";
+import { getCardByCost, getCardByType, getCardWithName } from "services/cards";
 
 export const CardManagerContext = createContext(false);
 
 export const CardManagerProvider = ({ children }) => {
+  const [selectedCard, setSelectedCard] = useState([]);
+  const [cardsInPlay, setCardsInPlay] = useState([]);
+  const [isAttacking, setIsAttacking] = useState(false);
+
   const {
     computer,
     player,
     currentPlayer,
-    setCurrentPlayer,
     endTurn,
     playerDeath,
     setPlayerDeath,
   } = useContext(PlayerManagerContext);
 
-  const [selectedCard, setSelectedCard] = useState([]);
-  const [cardsInPlay, setCardsInPlay] = useState([]);
-  const [isAttacking, setIsAttacking] = useState(false);
+  useEffect(() => {
+    if (currentPlayer.id === "computer") {
+      handleComputerTurn();
+    }
+  }, [currentPlayer]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setCardsInPlay(cardsInPlay);
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  }, [cardsInPlay]);
 
   const handleCardClick = (card) => {
     if (card.hasAttacked && card.owner === currentPlayer.id) {
@@ -135,12 +147,23 @@ export const CardManagerProvider = ({ children }) => {
       });
     }
 
-    let updatedCardsInPlay = [...cardsInPlay, card];
-    setCardsInPlay(updatedCardsInPlay);
+    setCardsInPlay((cardsInPlay) => [...cardsInPlay, card]);
   };
 
+  useEffect(() => {
+    setCardsInPlay(cardsInPlay);
+  }, [cardsInPlay]);
+
   const abilityCard = async (card, ability) => {
+    let cardsSelected = [];
+    let updatedBoard;
+
     switch (ability.id) {
+      case "drawCard":
+        for (let i = 0; i < ability.time; i++) {
+          drawCard(currentPlayer);
+        }
+        break;
       case "resetBoard":
         explodeBoard(card);
         break;
@@ -156,31 +179,69 @@ export const CardManagerProvider = ({ children }) => {
           card.attack += ability.attack;
         });
         break;
+      case "summonSameCostCard":
+        const costCards = getCardByCost(card.cost);
+        for (let i = 0; i < ability.time; i++) {
+          cardsSelected.push(
+            costCards[Math.floor(Math.random() * costCards.length)]
+          );
+        }
+        updatedBoard = await invokeMinion(cardsInPlay, cardsSelected, true);
+        setCardsInPlay([...updatedBoard, card]);
+        break;
+      case "summonTypedCard":
+        const typeCard = getCardByType(ability.type);
+        for (let i = 0; i < ability.time; i++) {
+          cardsSelected.push(
+            typeCard[Math.floor(Math.random() * typeCard.length)]
+          );
+        }
+
+        updatedBoard = await invokeMinion(cardsInPlay, cardsSelected, true);
+        setCardsInPlay([...updatedBoard, card]);
+
+        break;
       case "summonInvoke":
         if (ability.end) {
-          let updatedBoard = await invokeMinion(
+          updatedBoard = await invokeMinion(
             cardsInPlay,
             ability.invokeMinion,
             false
           );
           setCardsInPlay([...updatedBoard]);
         } else {
-          let updatedBoard = await invokeMinion(
+          updatedBoard = await invokeMinion(
             cardsInPlay,
             ability.invokeMinion,
             true
           );
-          setCardsInPlay([card, ...updatedBoard]);
+          setCardsInPlay([...updatedBoard, card]);
         }
         break;
       case "charge":
         card.hasAttacked = false;
         break;
+      case "openEggs":
+        card.name = "Dagonfly";
+        card.attack = 2;
+        card.hp = 3;
+        card.cost = 2;
+        card.description = "Opened Egg";
+        card.abilities = [];
+        break;
       case "deathCard":
-        setCardsInPlay(cardsInPlay.filter((c) => c.id !== card.id));
+        await removeCard(card);
+        break;
+      case "giveTypedCardInHand":
+        const cardsTyped = getCardByType(ability.type);
+        for (let i = 0; i < ability.time; i++) {
+          let cardSelected =
+            cardsTyped[Math.floor(Math.random() * cardsTyped.length)];
+          addCardInHand(cardSelected);
+        }
         break;
       case "giveAttackCardInHand":
-        for (let i = 0; i < ability.length; i++) {
+        for (let i = 0; i < ability.time; i++) {
           let cardSelected =
             currentPlayer.hand[
               Math.floor(Math.random() * currentPlayer.hand.length)
@@ -200,17 +261,29 @@ export const CardManagerProvider = ({ children }) => {
     }
     writeBoardAction(`${ability.description}`, currentPlayer.id);
   };
-  const removeCardFromBoard = async (cardToRemove, board) => {
-    let updatedCardsInPlay = [...board];
-    updatedCardsInPlay = updatedCardsInPlay.filter(
-      (c) => c.id !== cardToRemove.id
+
+  const addCardInHand = async (card) => {
+    currentPlayer.hand = [
+      ...currentPlayer.hand,
+      {
+        ...card,
+        owner: currentPlayer.id,
+        hasAttacked: false,
+        id: uuidv4(),
+      },
+    ];
+  };
+
+  const removeCard = async (card) => {
+    setCardsInPlay((cardsInPlay) =>
+      cardsInPlay.filter((c) => c.id !== card.id)
     );
-    return updatedCardsInPlay;
   };
 
   const explodeBoard = async (card) => {
-    const updatedCardsInPlay = [...cardsInPlay.filter((c) => c.id === card.id)];
-    setCardsInPlay(updatedCardsInPlay);
+    setCardsInPlay((cardsInPlay) =>
+      cardsInPlay.filter((c) => c.id === card.id)
+    );
   };
 
   const startTurnAbility = (currentPlayer) => {
@@ -270,11 +343,13 @@ export const CardManagerProvider = ({ children }) => {
       };
       cardsInPlayUpdated.push(card);
 
-      if (card.abilities) {
-        card.abilities.forEach((ability) => {
-          if (ability.invokedAbility) {
-            ability.invokedAbility(currentPlayer, card);
-          }
+      if (
+        card.abilities &&
+        card.abilities.invokeAbilities &&
+        card.abilities.invokeAbilities.length !== 0
+      ) {
+        card.abilities.invokeAbilities.forEach(async (ability) => {
+          await abilityCard(card, ability);
         });
       }
     });
@@ -287,11 +362,11 @@ export const CardManagerProvider = ({ children }) => {
   };
 
   const resetTurn = async () => {
-    await EndTurnAbility(async () => {
+    await EndTurnAbility(() => {
       setSelectedCard(null);
       endTurn();
       drawCard(currentPlayer.id === "player" ? computer : player);
-      await startTurnAbility(currentPlayer.id === "player" ? computer : player);
+      startTurnAbility(currentPlayer.id === "player" ? computer : player);
     });
   };
 
@@ -378,12 +453,12 @@ export const CardManagerProvider = ({ children }) => {
 
         const cardToPlay =
           availableCards[Math.floor(Math.random() * availableCards.length)];
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         writeBoardAction(
           `J'invoque la carte (${cardToPlay.name})`,
           currentPlayer.id
         );
-        await invokeCard(cardToPlay);
+        invokeCard(cardToPlay);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
       if (playerHasCardsInPlay && attackableCards.length > 0) {
@@ -396,37 +471,31 @@ export const CardManagerProvider = ({ children }) => {
             Math.floor(Math.random() * playerCardsInPlay.length)
           ];
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         writeBoardAction(
           `J'attaque la carte (${defendingCard.name}) d'en face avec (${attackingCard.name})`,
           currentPlayer.id
         );
         attackCardPlayer(attackingCard, defendingCard);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       } else if (attackableCards.length > 0) {
         // Si le joueur n'a pas de cartes sur le board, attaquer le joueur directement
         const attackingCard =
           attackableCards[Math.floor(Math.random() * attackableCards.length)];
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
         writeBoardAction(
           `J'attaque le joueur d'en face avec la carte (${attackingCard.name})`,
           currentPlayer.id
         );
         attackPlayer(attackingCard, "player");
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
     resetTurn();
   };
 
-  useEffect(() => {
-    if (currentPlayer.id === "computer") {
-      handleComputerTurn();
-    }
-  }, [currentPlayer]);
-
   const handleClickGiveButton = () => {
-    const card = getCardWithName("Leeroy");
+    const card = getCardWithName("Medhiv");
     let oneCard = card[0];
     console.log(oneCard);
     currentPlayer.hand = [
@@ -448,6 +517,7 @@ export const CardManagerProvider = ({ children }) => {
         handleEndTurnClick,
         selectedCard,
         cardsInPlay,
+        setCardsInPlay,
         isAttacking,
         playerDeath,
         handleClickGiveButton,

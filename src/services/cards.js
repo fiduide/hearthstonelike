@@ -55,7 +55,7 @@ const cards = [
           id: "giveAttackCardInHand",
           description: "Give +2 Attack in two random card",
           attack: 2,
-          length: 2,
+          time: 2,
         },
       ],
     },
@@ -325,7 +325,7 @@ const cards = [
   {
     name: "Leeroy",
     attack: 5,
-    type: "Humanoïde",
+    type: "Humanoid",
     hp: 1,
     cost: 4,
     description: "Summon 3 dragonet eggs, the card dies on the next turn.",
@@ -341,6 +341,13 @@ const cards = [
               hp: 1,
               cost: 1,
               description: "Splinter in the next round",
+              abilities: {
+                startTurnAbilities: [
+                  {
+                    id: "openEggs",
+                  },
+                ],
+              },
             },
             {
               name: "Dragonfly egg",
@@ -349,6 +356,13 @@ const cards = [
               hp: 1,
               cost: 1,
               description: "Splinter in the next round",
+              abilities: {
+                startTurnAbilities: [
+                  {
+                    id: "openEggs",
+                  },
+                ],
+              },
             },
             {
               name: "Dragonfly egg",
@@ -357,6 +371,13 @@ const cards = [
               hp: 1,
               cost: 1,
               description: "Splinter in the next round",
+              abilities: {
+                startTurnAbilities: [
+                  {
+                    id: "openEggs",
+                  },
+                ],
+              },
             },
           ],
         },
@@ -386,6 +407,116 @@ const cards = [
     cost: 2,
     description: "",
   },
+  {
+    name: "Ysera",
+    attack: 4,
+    type: "Dragon",
+    hp: 12,
+    cost: 9,
+    description: "At the end of your turn, add a dragon card to your hand",
+    abilities: {
+      endTurnAbilities: [
+        {
+          id: "giveTypedCardInHand",
+          type: "Dragon",
+          time: 1,
+        },
+      ],
+    },
+  },
+  {
+    name: "Mana Wave Totem",
+    attack: 0,
+    type: "Totem",
+    hp: 3,
+    cost: 3,
+    description: "You draw a card at the end of your turn.",
+    abilities: {
+      endTurnAbilities: [
+        {
+          id: "drawCard",
+          time: 1,
+        },
+      ],
+    },
+  },
+
+  {
+    name: "Totem of vitality",
+    attack: 0,
+    type: "Totem",
+    hp: 3,
+    cost: 2,
+    description: "At the end of the round return 4hp to the hero",
+    abilities: {
+      endTurnAbilities: [
+        {
+          id: "healCurrentPlayer",
+          description: "HP Player +4",
+          heal: 4,
+        },
+      ],
+    },
+  },
+  {
+    name: "Totem of fire tongue",
+    attack: 0,
+    type: "Totem",
+    hp: 2,
+    cost: 2,
+    description: "Adjacent servants have +2ATQ.",
+  },
+  {
+    name: "Thrall",
+    attack: 4,
+    type: "Orc",
+    hp: 7,
+    cost: 8,
+    description: "Summon a random totem.",
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "summonTypedCard",
+          time: 1,
+          type: "Totem",
+        },
+      ],
+    },
+  },
+  {
+    name: "Medhiv",
+    attack: 7,
+    type: "Humanoid",
+    hp: 7,
+    cost: 8,
+    description: "War cry: you team of Atiesh, great stick of the Guardian.",
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "summonInvoke",
+          invokeMinion: [
+            {
+              name: "Atiesh",
+              attack: 1,
+              type: "Weapon",
+              hp: 2,
+              cost: 3,
+              description:
+                "Next turn summons a random servant of the same cost and dies next turn.",
+              abilities: {
+                startTurnAbilities: [
+                  {
+                    id: "summonSameCostCard",
+                    time: 1,
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 export const getCards = () => {
@@ -393,6 +524,13 @@ export const getCards = () => {
 };
 
 export const getCardWithName = (name) => {
-  let card = cards.filter((card) => card.name === name);
-  return card;
+  return cards.filter((card) => card.name === name);
+};
+
+export const getCardByCost = (cost) => {
+  return cards.filter((card) => card.cost === cost);
+};
+
+export const getCardByType = (type) => {
+  return cards.filter((card) => card.type === type);
 };
