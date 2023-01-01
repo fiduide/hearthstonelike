@@ -147,7 +147,11 @@ export const CardManagerProvider = ({ children }) => {
       });
     }
 
-    setCardsInPlay((cardsInPlay) => [...cardsInPlay, card]);
+    if (card.type !== "Spell") {
+      setCardsInPlay((cardsInPlay) => [...cardsInPlay, card]);
+    } else {
+      setCardsInPlay((cardsInPlay) => [...cardsInPlay]);
+    }
   };
 
   useEffect(() => {
@@ -157,6 +161,7 @@ export const CardManagerProvider = ({ children }) => {
   const abilityCard = async (card, ability) => {
     let cardsSelected = [];
     let updatedBoard;
+    let cardsTyped;
 
     switch (ability.id) {
       case "drawCard":
@@ -196,10 +201,19 @@ export const CardManagerProvider = ({ children }) => {
             typeCard[Math.floor(Math.random() * typeCard.length)]
           );
         }
-
         updatedBoard = await invokeMinion(cardsInPlay, cardsSelected, true);
         setCardsInPlay([...updatedBoard, card]);
-
+        break;
+      case "stealCardDeck":
+        let opponent = currentPlayer.id === "player" ? computer : player;
+        for (let i = 0; i < ability.time; i++) {
+          let c =
+            opponent.deck[Math.floor(Math.random() * opponent.deck.length)];
+          opponent.deck = opponent.deck.filter(
+            (cardFiltered) => cardFiltered.id !== c.id
+          );
+          addCardInHand(c);
+        }
         break;
       case "summonInvoke":
         if (ability.end) {
@@ -233,12 +247,19 @@ export const CardManagerProvider = ({ children }) => {
         await removeCard(card);
         break;
       case "giveTypedCardInHand":
-        const cardsTyped = getCardByType(ability.type);
+        cardsTyped = getCardByType(ability.type);
         for (let i = 0; i < ability.time; i++) {
           let cardSelected =
             cardsTyped[Math.floor(Math.random() * cardsTyped.length)];
           addCardInHand(cardSelected);
         }
+        break;
+      case "giveCardHand":
+        let cardToGive = ability.cardToGive;
+        cardToGive.forEach((c) => {
+          addCardInHand(c);
+        });
+
         break;
       case "giveAttackCardInHand":
         for (let i = 0; i < ability.time; i++) {
@@ -495,7 +516,7 @@ export const CardManagerProvider = ({ children }) => {
   };
 
   const handleClickGiveButton = () => {
-    const card = getCardWithName("Medhiv");
+    const card = getCardWithName("Lich Kings");
     let oneCard = card[0];
     console.log(oneCard);
     currentPlayer.hand = [

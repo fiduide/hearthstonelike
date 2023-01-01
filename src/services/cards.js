@@ -257,19 +257,27 @@ const cards = [
     abilities: {
       endTurnAbilities: [
         {
-          id: "summonInvoke",
+          id: "giveCardHand",
           end: true,
           description:
             "At the end of your turn, add a random Death Knight card to your hand",
-          invokeMinion: [
+          cardToGive: [
             {
-              name: "Death knight",
-              attack: 2,
-              type: "Undead",
-              hp: 1,
-              description: "Called by Lich Kings",
-              cost: 0,
-              abilities: [],
+              name: "Poigne de la mort",
+              attack: "",
+              type: "Spell",
+              hp: "",
+              description:
+                "Steals a minion from your opponent's deck and places it in your hand.",
+              cost: 2,
+              abilities: {
+                invokeAbilities: [
+                  {
+                    id: "stealCardDeck",
+                    time: 1,
+                  },
+                ],
+              },
             },
           ],
         },
