@@ -142,8 +142,7 @@ export const CardManagerProvider = ({ children }) => {
   const abilityCard = async (card, ability) => {
     switch (ability.id) {
       case "resetBoard":
-        const newTab = [];
-        setCardsInPlay([...newTab, card]);
+        explodeBoard(card);
         break;
       case "discardHand":
         currentPlayer.hand = [];
@@ -178,7 +177,7 @@ export const CardManagerProvider = ({ children }) => {
         card.hasAttacked = false;
         break;
       case "deathCard":
-        removeCardFromBoard(card);
+        setCardsInPlay(cardsInPlay.filter((c) => c.id !== card.id));
         break;
       case "giveAttackCardInHand":
         for (let i = 0; i < ability.length; i++) {
@@ -201,15 +200,20 @@ export const CardManagerProvider = ({ children }) => {
     }
     writeBoardAction(`${ability.description}`, currentPlayer.id);
   };
-  const removeCardFromBoard = (cardToRemove) => {
-    // Supprime la carte du board
-    const updatedCardsInPlay = [
-      ...cardsInPlay.filter((c) => c.id !== cardToRemove.id),
-    ];
+  const removeCardFromBoard = async (cardToRemove, board) => {
+    let updatedCardsInPlay = [...board];
+    updatedCardsInPlay = updatedCardsInPlay.filter(
+      (c) => c.id !== cardToRemove.id
+    );
+    return updatedCardsInPlay;
+  };
+
+  const explodeBoard = async (card) => {
+    const updatedCardsInPlay = [...cardsInPlay.filter((c) => c.id === card.id)];
     setCardsInPlay(updatedCardsInPlay);
   };
 
-  const StartTurnAbility = (currentPlayer) => {
+  const startTurnAbility = (currentPlayer) => {
     if (cardsInPlay.length !== 0) {
       const currentPlayerCardsInPlay = cardsInPlay.filter(
         (card) => card.owner === currentPlayer.id
@@ -222,7 +226,6 @@ export const CardManagerProvider = ({ children }) => {
             card.abilities.startTurnAbilities &&
             card.abilities.startTurnAbilities.length !== 0
           ) {
-            console.log("J'invoque les abilities pour => " + card.name);
             card.abilities.startTurnAbilities.forEach(async (ability) => {
               await abilityCard(card, ability);
             });
@@ -284,11 +287,11 @@ export const CardManagerProvider = ({ children }) => {
   };
 
   const resetTurn = async () => {
-    await EndTurnAbility(() => {
+    await EndTurnAbility(async () => {
       setSelectedCard(null);
       endTurn();
       drawCard(currentPlayer.id === "player" ? computer : player);
-      StartTurnAbility(currentPlayer.id === "player" ? computer : player);
+      await startTurnAbility(currentPlayer.id === "player" ? computer : player);
     });
   };
 
@@ -414,11 +417,6 @@ export const CardManagerProvider = ({ children }) => {
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
     resetTurn();
-    // EndTurnAbility(() => {
-    //   endTurn();
-    //   drawCard(player);
-    //   StartTurnAbility(player);
-    // });
   };
 
   useEffect(() => {
