@@ -1,32 +1,5 @@
 const cards = [
   {
-    name: "Clerc",
-    attack: 5,
-    type: "Humanoid",
-    hp: 10,
-    description: "Give 5HP to owner",
-    cost: 8,
-    abilities: {
-      invokeAbilities: [
-        {
-          id: "healCurrentPlayer",
-          description: "Heals the owner for 5 health.",
-          heal: 5,
-        },
-      ],
-    },
-  },
-
-  {
-    name: "War",
-    attack: 1,
-    type: "Orc",
-    description: "Simple war",
-    hp: 2,
-    cost: 1,
-    abilities: [],
-  },
-  {
     name: "Hunter",
     attack: 1,
     type: "Orc",
@@ -38,24 +11,6 @@ const cards = [
         {
           id: "charge",
           description: "Can attack direcly when is invoke",
-        },
-      ],
-    },
-  },
-  {
-    name: "Paladin",
-    attack: 2,
-    type: "Humanoid",
-    hp: 2,
-    description: "Give +2 Attack in two random card in your hand",
-    cost: 4,
-    abilities: {
-      invokeAbilities: [
-        {
-          id: "giveAttackCardInHand",
-          description: "Give +2 Attack in two random card",
-          attack: 2,
-          time: 2,
         },
       ],
     },
@@ -249,6 +204,7 @@ const cards = [
   {
     name: "Lich Kings",
     attack: 8,
+    provocation: true,
     type: "Undead",
     hp: 8,
     cost: 8,
@@ -524,6 +480,122 @@ const cards = [
         },
       ],
     },
+  },
+  {
+    name: "Anachronos",
+    attack: 8,
+    type: "Dragon",
+    hp: 8,
+    cost: 7,
+    description: "Can attack direcly",
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "charge",
+        },
+      ],
+    },
+  },
+  {
+    name: "Nérubien",
+    attack: 4,
+    type: "Humanoid",
+    hp: 4,
+    cost: 4,
+    description: "",
+  },
+  {
+    name: "Cho’gall",
+    attack: 7,
+    type: "Humanoid",
+    hp: 7,
+    cost: 7,
+    description: "",
+  },
+
+  {
+    name: "Moroes",
+    attack: 1,
+    type: "Humanoid",
+    hp: 1,
+    cost: 3,
+    description: "",
+  },
+  {
+    name: "Pyromancien Flurgl",
+    attack: 2,
+    type: "Humanoid",
+    hp: 2,
+    cost: 2,
+    description: "",
+  },
+  {
+    name: "Al’lar",
+    attack: 7,
+    type: "Elementary",
+    hp: 3,
+    cost: 5,
+    description:
+      "Rattle of Agony: Summons an Al'ar Ashes 0/3 card that resurrects this servant on your next turn.",
+    abilities: {
+      dieAbilities: [
+        {
+          id: "summonInvoke",
+          die: true,
+          invokeMinion: [
+            {
+              name: "Al'ar Ashes",
+              attack: 0,
+              type: "Humanoid",
+              hp: 3,
+              cost: 0,
+              description: "Resurrects Al’lar",
+              abilities: {
+                startTurnAbilities: [
+                  {
+                    id: "summonWithName",
+                    name: "Al’lar",
+                  },
+                  {
+                    id: "deathCard",
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    name: "Anub’arak",
+    attack: 8,
+    type: "Creature",
+    hp: 4,
+    cost: 9,
+    description:
+      "Rattle of Agony: Returns it to your hand and summons a 4/4 Nerubian.",
+    abilities: {
+      dieAbilities: [
+        {
+          id: "summonWithName",
+          name: "Nérubien",
+        },
+        {
+          id: "giveCardHand",
+          name: "Anub’arak",
+        },
+      ],
+    },
+  },
+  {
+    name: "Treant",
+    attack: 2,
+    type: "Creature",
+    hp: 2,
+    provocation: true,
+    cost: 2,
+    description: "Provocation",
   },
 ];
 

@@ -11,6 +11,8 @@ const CardStyled = styled.div`
   transition: ease-in-out all 0.25s;
   transform: ${(props) => (props.selectedCard ? "scale(1.10)" : "scale(1)")};
 
+  border: ${(props) => (props.provocation ? "6px solid gray" : "none")};
+
   .selected {
     border: 5px inset red;
   }

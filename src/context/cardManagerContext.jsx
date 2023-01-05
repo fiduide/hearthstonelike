@@ -105,7 +105,22 @@ export const CardManagerProvider = ({ children }) => {
   };
 
   const attackCardPlayer = (attackerCard, defenderCard) => {
+    const provationCardExist = cardsInPlay.filter(
+      (card) => card.provocation === true && card.owner != currentPlayer.id
+    );
+
+    console.log(provationCardExist.length);
+
+    if (provationCardExist.length > 0 && defenderCard.provocation !== true) {
+      writeBoardAction(
+        `Les cartes provocation doivent être détruitent en premier`,
+        currentPlayer.id
+      );
+      return;
+    }
+
     setIsAttacking(true);
+    let cardsDie = [];
 
     const updatedCardsInPlay = cardsInPlay.map((card) => {
       if (card.id === attackerCard.id) {
@@ -117,6 +132,7 @@ export const CardManagerProvider = ({ children }) => {
 
       if (card.hp <= 0) {
         writeBoardAction(`La carte ${card.name} est détruite`, card.owner);
+        cardsDie.push(card);
         return null;
       }
 
@@ -125,10 +141,29 @@ export const CardManagerProvider = ({ children }) => {
 
     setIsAttacking(false);
     setCardsInPlay(updatedCardsInPlay.filter((card) => card));
+
+    if (cardsDie.length > 0) {
+      cardsDie.forEach((cardDeath) => {
+        dieAbilitiesLaunch(cardDeath);
+      });
+    }
   };
 
-  const invokeCard = async (card) => {
-    card = { ...card, hasAttacked: true };
+  const dieAbilitiesLaunch = async (card) => {
+    removeCard(card);
+    if (
+      card.abilities &&
+      card.abilities.dieAbilities &&
+      card.abilities.dieAbilities.length !== 0
+    ) {
+      card.abilities.dieAbilities.forEach(async (ability) => {
+        await abilityCard(card, ability);
+      });
+    }
+  };
+
+  const invokeCard = async (card, hasAttacked) => {
+    card = { ...card, hasAttacked: hasAttacked ? hasAttacked : true };
 
     currentPlayer.currentMana -= card.cost;
     currentPlayer.hand = currentPlayer.hand.filter(
@@ -162,6 +197,7 @@ export const CardManagerProvider = ({ children }) => {
     let cardsSelected = [];
     let updatedBoard;
     let cardsTyped;
+    let cardNamed;
 
     switch (ability.id) {
       case "drawCard":
@@ -191,8 +227,14 @@ export const CardManagerProvider = ({ children }) => {
             costCards[Math.floor(Math.random() * costCards.length)]
           );
         }
-        updatedBoard = await invokeMinion(cardsInPlay, cardsSelected, true);
-        setCardsInPlay([...updatedBoard, card]);
+        cardsSelected.forEach(async (c) => {
+          await invokeCard({ ...c, owner: card.owner, id: uuidv4() });
+        });
+        break;
+      case "summonWithName":
+        cardNamed = getCardWithName(ability.name);
+        cardNamed = { ...cardNamed[0], owner: card.owner, id: uuidv4() };
+        await invokeCard(cardNamed);
         break;
       case "summonTypedCard":
         const typeCard = getCardByType(ability.type);
@@ -201,8 +243,9 @@ export const CardManagerProvider = ({ children }) => {
             typeCard[Math.floor(Math.random() * typeCard.length)]
           );
         }
-        updatedBoard = await invokeMinion(cardsInPlay, cardsSelected, true);
-        setCardsInPlay([...updatedBoard, card]);
+        cardsSelected.forEach(async (c) => {
+          await invokeCard({ ...c, owner: card.owner, id: uuidv4() });
+        });
         break;
       case "stealCardDeck":
         let opponent = currentPlayer.id === "player" ? computer : player;
@@ -224,12 +267,9 @@ export const CardManagerProvider = ({ children }) => {
           );
           setCardsInPlay([...updatedBoard]);
         } else {
-          updatedBoard = await invokeMinion(
-            cardsInPlay,
-            ability.invokeMinion,
-            true
-          );
-          setCardsInPlay([...updatedBoard, card]);
+          ability.invokeMinion.forEach(async (c) => {
+            await invokeCard({ ...c, owner: card.owner, id: uuidv4() });
+          });
         }
         break;
       case "charge":
@@ -255,10 +295,17 @@ export const CardManagerProvider = ({ children }) => {
         }
         break;
       case "giveCardHand":
-        let cardToGive = ability.cardToGive;
-        cardToGive.forEach((c) => {
-          addCardInHand(c);
-        });
+        let cardToGive;
+        if (ability.name === undefined) {
+          cardToGive = ability.cardToGive;
+          cardToGive.forEach((c) => {
+            addCardInHand(c);
+          });
+        } else {
+          cardToGive = getCardWithName(ability.name);
+
+          addCardInHand(cardToGive[0]);
+        }
 
         break;
       case "giveAttackCardInHand":
@@ -353,12 +400,17 @@ export const CardManagerProvider = ({ children }) => {
     callback();
   };
 
-  const invokeMinion = async (updatedCardsInPlay, minions, hasAttacked) => {
+  const invokeMinion = async (
+    updatedCardsInPlay,
+    minions,
+    hasAttacked,
+    playerToOwner
+  ) => {
     const cardsInPlayUpdated = [...updatedCardsInPlay];
     minions.forEach((minion) => {
       let card = {
         ...minion,
-        owner: currentPlayer.id,
+        owner: playerToOwner ? playerToOwner : currentPlayer.id,
         hasAttacked: hasAttacked,
         id: uuidv4(),
       };
@@ -455,6 +507,10 @@ export const CardManagerProvider = ({ children }) => {
         (card) => !card.hasAttacked
       );
 
+      const provocationCards = playerCardsInPlay.filter(
+        (card) => card.provocation === true
+      );
+
       const playerHasCardsInPlay = playerCardsInPlay.length > 0;
 
       if (computer.currentMana === 0 || attackableCards.length === 0) {
@@ -474,23 +530,29 @@ export const CardManagerProvider = ({ children }) => {
 
         const cardToPlay =
           availableCards[Math.floor(Math.random() * availableCards.length)];
-        writeBoardAction(
-          `J'invoque la carte (${cardToPlay.name})`,
-          currentPlayer.id
-        );
-        invokeCard(cardToPlay);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        if (availableCards.length > 0) {
+          invokeCard(cardToPlay);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
       }
 
       if (playerHasCardsInPlay && attackableCards.length > 0) {
         // Si le joueur a des cartes sur le board, attaquer une de ses cartes avec une carte de l'ordinateur
-
         const attackingCard =
           attackableCards[Math.floor(Math.random() * attackableCards.length)];
-        const defendingCard =
-          playerCardsInPlay[
-            Math.floor(Math.random() * playerCardsInPlay.length)
-          ];
+        let defendingCard = {};
+        if (provocationCards.length > 0) {
+          defendingCard =
+            provocationCards[
+              Math.floor(Math.random() * provocationCards.length)
+            ];
+        } else {
+          defendingCard =
+            playerCardsInPlay[
+              Math.floor(Math.random() * playerCardsInPlay.length)
+            ];
+        }
 
         writeBoardAction(
           `J'attaque la carte (${defendingCard.name}) d'en face avec (${attackingCard.name})`,
@@ -516,7 +578,7 @@ export const CardManagerProvider = ({ children }) => {
   };
 
   const handleClickGiveButton = () => {
-    const card = getCardWithName("Lich Kings");
+    const card = getCardWithName("Treant");
     let oneCard = card[0];
     console.log(oneCard);
     currentPlayer.hand = [

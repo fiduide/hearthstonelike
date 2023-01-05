@@ -19,6 +19,7 @@ const Card = (props) => {
     hasAttacked,
     isAttacking,
     selectedCard,
+    provocation,
   } = props;
 
   const cardRef = useRef(null);
@@ -63,7 +64,11 @@ const Card = (props) => {
       id={id}
       onClick={() => onCardClick(props)}
     >
-      <CardStyled bg={cardBg} selectedCard={selectedCard}>
+      <CardStyled
+        provocation={provocation ? provocation : false}
+        bg={cardBg}
+        selectedCard={selectedCard}
+      >
         <div className="card-text name">{name}</div>
         <div className="card-description">{description}</div>
         <div className="card-stats">
