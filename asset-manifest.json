@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/hearthstonelike/static/css/main.289b2fbc.css",
-    "main.js": "/hearthstonelike/static/js/main.ef94eaa5.js",
+    "main.css": "/hearthstonelike/static/css/main.3ad5d177.css",
+    "main.js": "/hearthstonelike/static/js/main.409e2b84.js",
     "static/media/wood.png": "/hearthstonelike/static/media/wood.1f14afeec6815ab701ee.png",
     "static/media/rock.png": "/hearthstonelike/static/media/rock.ed224303a167d5cb01f9.png",
     "static/media/cards.png": "/hearthstonelike/static/media/cards.0bcc48450e25ba03eadd.png",
     "static/media/ambre.jpg": "/hearthstonelike/static/media/ambre.49c13372d050cc998453.jpg",
     "index.html": "/hearthstonelike/index.html",
-    "main.289b2fbc.css.map": "/hearthstonelike/static/css/main.289b2fbc.css.map",
-    "main.ef94eaa5.js.map": "/hearthstonelike/static/js/main.ef94eaa5.js.map"
+    "main.3ad5d177.css.map": "/hearthstonelike/static/css/main.3ad5d177.css.map",
+    "main.409e2b84.js.map": "/hearthstonelike/static/js/main.409e2b84.js.map"
   },
   "entrypoints": [
-    "static/css/main.289b2fbc.css",
-    "static/js/main.ef94eaa5.js"
+    "static/css/main.3ad5d177.css",
+    "static/js/main.409e2b84.js"
   ]
 }
