@@ -57,6 +57,21 @@ const Board = styled.div`
     font-size: 10px;
     color: white;
     background-color: red;
+    max-height: 300px !important;
+    overflow-y: scroll;
+    opacity: 0.7;
+  }
+
+  @media screen and (max-width: 1024px) {
+    button {
+      transform: scale(2);
+      right: 10%;
+      top: 45%;
+    }
+    #log {
+      max-height: 300px !important;
+      max-width: 200px;
+    }
   }
 `;
 

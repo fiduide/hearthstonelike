@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 const CardStyled = styled.div`
-  // Couleurs de base pour les cartes
   background-image: url(${(props) => props.bg});
   background-repeat: no-repeat;
   background-size: contain;
@@ -10,7 +9,6 @@ const CardStyled = styled.div`
   position: relative;
   transition: ease-in-out all 0.25s;
   transform: ${(props) => (props.selectedCard ? "scale(1.10)" : "scale(1)")};
-
   border: ${(props) => (props.provocation ? "6px solid gray" : "none")};
 
   .selected {
@@ -63,6 +61,11 @@ const CardStyled = styled.div`
       position: absolute;
       left: 8px;
       top: 0px;
+    }
+
+    @media screen and (max-width: 1024px) {
+      max-height: 100px !important;
+      max-width: 50px !important;
     }
   }
 `;

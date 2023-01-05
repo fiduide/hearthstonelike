@@ -40,6 +40,19 @@ const PlayerStyled = styled.div`
       margin-top: 20px;
     }
   }
+
+  @media screen and (max-width: 1024px) {
+    .player {
+      &-hand {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        max-width: 1024px !important;
+        min-width: auto;
+      }
+    }
+  }
 `;
 
 export default PlayerStyled;
