@@ -1,11 +1,9 @@
 import styled from "styled-components";
 
 const PlayerStyled = styled.div`
-  background-image: url(${(props) => props.bg});
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-color: #1a2530;
+  border-radius: 8px;
   width: fit-content;
-  border: 2px solid gray;
   text-align: center;
   color: white;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);

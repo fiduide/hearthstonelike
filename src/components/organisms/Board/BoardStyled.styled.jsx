@@ -3,9 +3,6 @@ import styled from "styled-components";
 const Board = styled.div`
   position: relative;
   width: 100%;
-  background-image: url(${(props) => props.bg});
-  background-repeat: no-repeat;
-  background-size: cover;
 
   .current-player {
     position: fixed;
@@ -22,6 +19,7 @@ const Board = styled.div`
   }
   .box-card {
     border: 1px solid black;
+    background-color: #6d8297;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -29,6 +27,8 @@ const Board = styled.div`
     min-height: 300px;
 
     hr {
+      color: #4f6f90;
+      background-color: #4f6f90;
       width: 100%;
     }
     .board-card {
@@ -40,14 +40,18 @@ const Board = styled.div`
 
   button {
     position: absolute;
-    background-image: url(${(props) => props.buttonBg});
     border: none;
     border-radius: 8px;
     padding: 5px;
-    top: 50%;
+    top: 47.5%;
     right: 5%;
     z-index: 1;
     transform: scale(3);
+    transition: ease-in-out all 0.25s;
+    &:hover {
+      background-color: #1a2530;
+      color: white;
+    }
   }
 
   #log {

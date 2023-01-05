@@ -32,6 +32,7 @@ body {
   font-family: "Microsoft YaHei", Arial, Helvetica, sans-serif;
   color: #000;
   -webkit-font-smoothing: antialiased; /* Make the page font clear */
+  background-color: #2e4154;
 }
 ul {
   list-style: none;
