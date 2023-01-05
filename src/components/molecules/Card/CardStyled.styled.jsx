@@ -11,6 +11,12 @@ const CardStyled = styled.div`
   transform: ${(props) => (props.selectedCard ? "scale(1.10)" : "scale(1)")};
   border: ${(props) => (props.provocation ? "6px solid gray" : "none")};
 
+  img {
+    max-width: 75px;
+    position: absolute;
+    left: 25%;
+    z-index: -1;
+  }
   .selected {
     border: 5px inset red;
   }

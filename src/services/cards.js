@@ -2,7 +2,7 @@ const cards = [
   {
     name: "Hunter",
     attack: 1,
-    type: "Orc",
+    type: "Nain",
     description: "Can attack direcly",
     hp: 2,
     cost: 1,

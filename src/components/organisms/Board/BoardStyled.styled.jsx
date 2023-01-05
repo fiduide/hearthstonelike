@@ -49,7 +49,6 @@ const Board = styled.div`
     transform: scale(3);
     transition: ease-in-out all 0.25s;
     display: ${(props) => (props.buttonBg ? "initial" : "none")};
-
     background-color: ${(props) => (props.buttonBg ? "#DCE4EC" : "#7D8287")};
     color: ${(props) => (props.buttonBg ? "black" : "white")};
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);

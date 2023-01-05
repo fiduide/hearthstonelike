@@ -69,6 +69,10 @@ const Card = (props) => {
         bg={cardBg}
         selectedCard={selectedCard}
       >
+        <img
+          src={process.env.PUBLIC_URL + "/assets/images/cards/" + name + ".png"}
+          alt=""
+        />
         <div className="card-text name">{name}</div>
         <div className="card-description">{description}</div>
         <div className="card-stats">
