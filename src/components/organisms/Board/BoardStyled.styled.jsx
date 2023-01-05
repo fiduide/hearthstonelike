@@ -48,6 +48,12 @@ const Board = styled.div`
     z-index: 1;
     transform: scale(3);
     transition: ease-in-out all 0.25s;
+    display: ${(props) => (props.buttonBg ? "initial" : "none")};
+
+    background-color: ${(props) => (props.buttonBg ? "#DCE4EC" : "#7D8287")};
+    color: ${(props) => (props.buttonBg ? "black" : "white")};
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+
     &:hover {
       background-color: #1a2530;
       color: white;

@@ -5,9 +5,6 @@ import { CardManagerContext } from "context/cardManagerContext";
 import { PlayerManagerContext } from "context/playerManagerContext";
 import { useContext, useEffect, useState } from "react";
 import BoardStyled from "./BoardStyled.styled";
-import woodBg from "assets/images/wood.png";
-import ambre from "assets/images/button/ambre.jpg";
-import ambreGray from "assets/images/button/ambre-gray.jpg";
 import { Death } from "components/molecules/Death";
 
 const Board = () => {
@@ -40,8 +37,7 @@ const Board = () => {
   } else {
     return (
       <BoardStyled
-        buttonBg={currentPlayer.id === "player" ? ambre : ambreGray}
-        bg={woodBg}
+        buttonBg={currentPlayer.id === "player" ? true : false}
         currentPlayer={currentPlayer.id}
       >
         <div className="current-player">
@@ -104,7 +100,7 @@ const Board = () => {
             {...player}
           />
         </div>
-        <button onClick={handleEndTurnClick}>Fin de tour</button>
+        <button onClick={handleEndTurnClick}>Passer</button>
         <a onClick={handleClickGiveButton}>Give Card</a>
         <div id="log"></div>
       </BoardStyled>
