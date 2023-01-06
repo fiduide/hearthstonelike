@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/hearthstonelike/static/css/main.3ad5d177.css",
-    "main.js": "/hearthstonelike/static/js/main.369765c2.js",
+    "main.js": "/hearthstonelike/static/js/main.61e752e6.js",
     "static/media/rock.png": "/hearthstonelike/static/media/rock.ed224303a167d5cb01f9.png",
     "static/media/cards.png": "/hearthstonelike/static/media/cards.0bcc48450e25ba03eadd.png",
     "index.html": "/hearthstonelike/index.html",
     "main.3ad5d177.css.map": "/hearthstonelike/static/css/main.3ad5d177.css.map",
-    "main.369765c2.js.map": "/hearthstonelike/static/js/main.369765c2.js.map"
+    "main.61e752e6.js.map": "/hearthstonelike/static/js/main.61e752e6.js.map"
   },
   "entrypoints": [
     "static/css/main.3ad5d177.css",
-    "static/js/main.369765c2.js"
+    "static/js/main.61e752e6.js"
   ]
 }
