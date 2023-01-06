@@ -361,6 +361,13 @@ const cards = [
     hp: 1,
     cost: 1,
     description: "Splinter in the next round",
+    abilities: {
+      startTurnAbilities: [
+        {
+          id: "openEggs",
+        },
+      ],
+    },
   },
 
   {
