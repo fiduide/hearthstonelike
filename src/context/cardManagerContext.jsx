@@ -276,7 +276,7 @@ export const CardManagerProvider = ({ children }) => {
         card.hasAttacked = false;
         break;
       case "openEggs":
-        card.name = "Dagonfly";
+        card.name = "Dragonfly";
         card.attack = 2;
         card.hp = 3;
         card.cost = 2;
