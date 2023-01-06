@@ -18,7 +18,7 @@ const Player = ({
 }) => {
   return (
     <PlayerStyled bg={rockTexture} className={`player-${id}`}>
-      <div className="blockHp" onClick={(e) => onPlayerClick(e, id)}>
+      <div id={id} className="blockHp" onClick={(e) => onPlayerClick(e, id)}>
         <div className="player-name">{name}</div>
         <div className="player-hp">
           {hp} / {maxHp}

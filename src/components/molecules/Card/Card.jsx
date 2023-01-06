@@ -22,7 +22,6 @@ const Card = (props) => {
     provocation,
   } = props;
 
-  const cardRef = useRef(null);
   const cardSpring = useSpring({
     from: {
       transform: `translate3d(-350px, ${
@@ -33,33 +32,15 @@ const Card = (props) => {
   });
 
   const attackSpring = useSpring({
-    from: {
-      transform: `translate3d(${
-        isAttacking && isAttacking.boolean ? isAttacking.cursor.y + "px" : "0"
-      }, ${
-        isAttacking && isAttacking.boolean ? isAttacking.cursor.x + "px" : "0"
-      }, 0)`,
-    },
-    to: async (next) => {
-      // Déplace la carte à l'endroit de isAttacking.cursor.x et .y
-      await next({
-        transform: `translate3d(-${
-          isAttacking && isAttacking.boolean ? isAttacking.cursor.y * 3 : 0
-        }px, -${
-          isAttacking && isAttacking.boolean ? isAttacking.cursor.x * 3 : 0
-        }px, 0)`,
-      });
-      // Fait revenir la carte à sa place d'origine
-      await next({
-        transform: "translate3d(0, 0, 0)",
-      });
-    },
-    config: { duration: 350 },
+    transform: `translate3d(${
+      isAttacking && isAttacking.boolean ? isAttacking.card.y + "px" : 0
+    }px, ${
+      isAttacking && isAttacking.boolean ? isAttacking.card.x + "px" : 0
+    }px, 0)`,
   });
 
   return (
     <animated.div
-      ref={cardRef}
       style={isAttacking && isAttacking.boolean ? attackSpring : cardSpring}
       id={id}
       onClick={() => onCardClick(props)}

@@ -104,12 +104,10 @@ export const CardManagerProvider = ({ children }) => {
     }
   };
 
-  const attackCardPlayer = (attackerCard, defenderCard) => {
+  const attackCardPlayer = async (attackerCard, defenderCard) => {
     const provationCardExist = cardsInPlay.filter(
       (card) => card.provocation === true && card.owner != currentPlayer.id
     );
-
-    console.log(provationCardExist.length);
 
     if (provationCardExist.length > 0 && defenderCard.provocation !== true) {
       writeBoardAction(
@@ -119,28 +117,52 @@ export const CardManagerProvider = ({ children }) => {
       return;
     }
 
-    setIsAttacking(true);
+    // setIsAttacking(true);
     let cardsDie = [];
 
-    const updatedCardsInPlay = cardsInPlay.map((card) => {
-      if (card.id === attackerCard.id) {
-        card.hp -= defenderCard.attack;
-        card.hasAttacked = true;
-      } else if (card.id === defenderCard.id) {
-        card.hp -= attackerCard.attack;
-      }
+    let defenderCardComponent = document.getElementById(defenderCard.id);
+    let attackCardComponent = document.getElementById(attackerCard.id);
+    attackCardComponent.style.transition = "ease-in-out all 0.25s";
 
-      if (card.hp <= 0) {
-        writeBoardAction(`La carte ${card.name} est détruite`, card.owner);
-        cardsDie.push(card);
-        return null;
-      }
+    let defenderCardPosition = defenderCardComponent.getBoundingClientRect();
 
-      return card;
-    });
+    if (attackerCard.owner === "player") {
+      attackCardComponent.style.transform = `translate3d(${0}px, ${
+        -defenderCardPosition.top / 2
+      }px, 0)`;
+    } else {
+      attackCardComponent.style.transform = `translate3d(${0}px, ${
+        defenderCardPosition.top / 2
+      }px, 0)`;
+    }
 
-    setIsAttacking(false);
-    setCardsInPlay(updatedCardsInPlay.filter((card) => card));
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    attackCardComponent.style.transform = `translate3d(0, 0, 0)`;
+
+    defenderCardComponent.style.background = "rgba(191, 0, 0, 0.57)";
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    defenderCardComponent.style.background = "initial";
+
+    attackerCard.hp -= defenderCard.attack;
+    attackerCard.hasAttacked = true;
+    defenderCard.hp -= attackerCard.attack;
+
+    if (attackerCard.hp <= 0) {
+      writeBoardAction(
+        `La carte ${attackerCard.name} est détruite`,
+        attackerCard.owner
+      );
+      cardsDie.push(attackerCard);
+    }
+
+    if (defenderCard.hp <= 0) {
+      writeBoardAction(
+        `La carte ${defenderCard.name} est détruite`,
+        defenderCard.owner
+      );
+      cardsDie.push(defenderCard);
+    }
 
     if (cardsDie.length > 0) {
       cardsDie.forEach((cardDeath) => {
@@ -150,6 +172,23 @@ export const CardManagerProvider = ({ children }) => {
   };
 
   const dieAbilitiesLaunch = async (card) => {
+    let elementId = document.getElementById(card.id);
+
+    elementId.style.background = "rgba(191, 0, 0, 0.57)";
+
+    elementId.style.transform = `translate3d(${-5}px, ${0}px, 0)`;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    elementId.style.transform = `translate3d(${5}px, ${0}px, 0)`;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    elementId.style.transform = `translate3d(${-5}px, ${0}px, 0)`;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    elementId.style.transform = `translate3d(${5}px, ${0}px, 0)`;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    elementId.style.transform = `translate3d(${-5}px, ${0}px, 0)`;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    elementId.style.transform = `translate3d(${5}px, ${0}px, 0)`;
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     removeCard(card);
     if (
       card.abilities &&
@@ -260,12 +299,9 @@ export const CardManagerProvider = ({ children }) => {
         break;
       case "summonInvoke":
         if (ability.end) {
-          updatedBoard = await invokeMinion(
-            cardsInPlay,
-            ability.invokeMinion,
-            false
-          );
-          setCardsInPlay([...updatedBoard]);
+          ability.invokeMinion.forEach(async (c) => {
+            await invokeCard({ ...c, owner: card.owner, id: uuidv4() }, false);
+          });
         } else {
           ability.invokeMinion.forEach(async (c) => {
             await invokeCard({ ...c, owner: card.owner, id: uuidv4() });
@@ -303,7 +339,6 @@ export const CardManagerProvider = ({ children }) => {
           });
         } else {
           cardToGive = getCardWithName(ability.name);
-
           addCardInHand(cardToGive[0]);
         }
 
@@ -400,35 +435,35 @@ export const CardManagerProvider = ({ children }) => {
     callback();
   };
 
-  const invokeMinion = async (
-    updatedCardsInPlay,
-    minions,
-    hasAttacked,
-    playerToOwner
-  ) => {
-    const cardsInPlayUpdated = [...updatedCardsInPlay];
-    minions.forEach((minion) => {
-      let card = {
-        ...minion,
-        owner: playerToOwner ? playerToOwner : currentPlayer.id,
-        hasAttacked: hasAttacked,
-        id: uuidv4(),
-      };
-      cardsInPlayUpdated.push(card);
+  // const invokeMinion = async (
+  //   updatedCardsInPlay,
+  //   minions,
+  //   hasAttacked,
+  //   playerToOwner
+  // ) => {
+  //   const cardsInPlayUpdated = [...updatedCardsInPlay];
+  //   minions.forEach((minion) => {
+  //     let card = {
+  //       ...minion,
+  //       owner: playerToOwner ? playerToOwner : currentPlayer.id,
+  //       hasAttacked: hasAttacked,
+  //       id: uuidv4(),
+  //     };
+  //     cardsInPlayUpdated.push(card);
 
-      if (
-        card.abilities &&
-        card.abilities.invokeAbilities &&
-        card.abilities.invokeAbilities.length !== 0
-      ) {
-        card.abilities.invokeAbilities.forEach(async (ability) => {
-          await abilityCard(card, ability);
-        });
-      }
-    });
+  //     if (
+  //       card.abilities &&
+  //       card.abilities.invokeAbilities &&
+  //       card.abilities.invokeAbilities.length !== 0
+  //     ) {
+  //       card.abilities.invokeAbilities.forEach(async (ability) => {
+  //         await abilityCard(card, ability);
+  //       });
+  //     }
+  //   });
 
-    return cardsInPlayUpdated;
-  };
+  //   return cardsInPlayUpdated;
+  // };
 
   const handleEndTurnClick = () => {
     resetTurn();
@@ -460,8 +495,30 @@ export const CardManagerProvider = ({ children }) => {
     }
   };
 
-  const attackPlayer = (attackCard, defenderId, e) => {
-    // setIsAttacking({ boolean: true, cursor: { x: e.clientX, y: e.clientY } });
+  const attackPlayer = async (attackCard, defenderId, e) => {
+    let defenderCardComponent = document.getElementById(defenderId);
+    let attackCardComponent = document.getElementById(attackCard.id);
+    attackCardComponent.style.transition = "ease-in-out all 0.25s";
+
+    let defenderCardPosition = defenderCardComponent.getBoundingClientRect();
+
+    // Applique une transition à la carte "attackerCard" pour qu'elle se déplace jusqu'à la carte "defenderCard"
+    attackCardComponent.style.transition = "ease-in-out all 0.25s";
+
+    if (attackCard.owner === "computer") {
+      attackCardComponent.style.transform = `translate3d(${
+        defenderCardPosition.left
+      }px, ${defenderCardPosition.top / 2}px, 0)`;
+    } else {
+      attackCardComponent.style.transform = `translate3d(${0}px, ${
+        -defenderCardPosition.top + window.scrollY
+      }rem, 0)`;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    attackCardComponent.style.transform = `translate3d(0, 0, 0)`;
+
     const defender = defenderId === "player" ? player : computer;
     defender.hp -= attackCard.attack;
 
@@ -570,7 +627,7 @@ export const CardManagerProvider = ({ children }) => {
           currentPlayer.id
         );
         attackPlayer(attackingCard, "player");
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     }
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -578,7 +635,7 @@ export const CardManagerProvider = ({ children }) => {
   };
 
   const handleClickGiveButton = () => {
-    const card = getCardWithName("Treant");
+    const card = getCardWithName("Hunter");
     let oneCard = card[0];
     console.log(oneCard);
     currentPlayer.hand = [
