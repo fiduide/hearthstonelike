@@ -106,7 +106,7 @@ export const CardManagerProvider = ({ children }) => {
 
   const attackCardPlayer = async (attackerCard, defenderCard) => {
     const provationCardExist = cardsInPlay.filter(
-      (card) => card.provocation === true && card.owner != currentPlayer.id
+      (card) => card.provocation === true && card.owner !== currentPlayer.id
     );
 
     if (provationCardExist.length > 0 && defenderCard.provocation !== true) {
@@ -234,9 +234,10 @@ export const CardManagerProvider = ({ children }) => {
 
   const abilityCard = async (card, ability) => {
     let cardsSelected = [];
-    let updatedBoard;
     let cardsTyped;
     let cardNamed;
+    const enemy = card.owner === "player" ? "computer" : "player";
+    const enemyBoard = cardsInPlay.filter((card) => card.owner === enemy);
 
     switch (ability.id) {
       case "drawCard":
@@ -249,6 +250,88 @@ export const CardManagerProvider = ({ children }) => {
         break;
       case "discardHand":
         currentPlayer.hand = [];
+        break;
+      case "burnRandom":
+        for (let i = 0; i < ability.time; i++) {
+          let c = enemyBoard[Math.floor(Math.random() * enemyBoard.length)];
+          console.log(c);
+          if (
+            c.abilities.startTurnAbilities &&
+            c.abilities.startTurnAbilities.length > 0
+          ) {
+            c.abilities.startTurnAbilities = [
+              ...c.abilities.startTurnAbilities,
+              {
+                id: "burned",
+                turn: ability.turn,
+                damaged: ability.dmg,
+              },
+            ];
+          } else if (c.abilities) {
+            c.abilities.startTurnAbilities = [
+              {
+                id: "burned",
+                turn: ability.turn,
+                damaged: ability.dmg,
+              },
+            ];
+          } else {
+            c.abilities = {
+              startTurnAbilities: [
+                {
+                  id: "burned",
+                  turn: ability.turn,
+                  damaged: ability.dmg,
+                },
+              ],
+            };
+          }
+          document.getElementById(c.id).style.background =
+            "rgba(255, 171, 4, 0.57)";
+          writeBoardAction(
+            `La carte ${c.name} brûle pendant ${ability.turn} tour(s)`,
+            c.owner
+          );
+        }
+        break;
+      case "burned":
+        if (ability.turn > 0) {
+          card.hp -= ability.damaged;
+          let c = document.getElementById(card.id);
+          c.style.transition = "ease-in-out all 0.25s";
+          c.style.background = "rgba(191, 0, 0, 0.57)";
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          c.style.background = "initial";
+          ability.turn--;
+          if (ability.turn === 0) {
+            document.getElementById(c.id).style.background = "initial";
+          }
+          writeBoardAction(
+            `La carte ${card.name} brûle et perd ${ability.dmg} hp`,
+            card.owner
+          );
+
+          if (card.hp <= 0) {
+            writeBoardAction(
+              `La carte ${card.name} a été détruite par le pouvoir de ${card.name}`,
+              card.owner
+            );
+            removeCard(c);
+          }
+        }
+        break;
+      case "damageInEnemyBoard":
+        for (let i = 0; i < ability.time; i++) {
+          let c = enemyBoard[Math.floor(Math.random() * enemyBoard.length)];
+          c.hp -= ability.dmg;
+          if (c.hp <= 0) {
+            writeBoardAction(
+              `La carte ${c.name} a été détruite par le pouvoir de ${card.name}`,
+              card.owner
+            );
+            removeCard(c);
+          }
+        }
         break;
       case "giveToCardWhenTypeInBoard":
         const whenTypeSearch = cardsInPlay.filter(
@@ -354,7 +437,7 @@ export const CardManagerProvider = ({ children }) => {
         break;
       case "healCurrentPlayer":
         currentPlayer.hp += ability.heal;
-        if (currentPlayer.hp > 30) {
+        if (currentPlayer.hp >= 30) {
           currentPlayer.maxHp = currentPlayer.hp;
         }
         break;
@@ -635,7 +718,7 @@ export const CardManagerProvider = ({ children }) => {
   };
 
   const handleClickGiveButton = () => {
-    const card = getCardWithName("Hunter");
+    const card = getCardWithName("Alexstrasza");
     let oneCard = card[0];
     console.log(oneCard);
     currentPlayer.hand = [

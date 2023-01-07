@@ -587,10 +587,12 @@ const cards = [
         {
           id: "summonWithName",
           name: "Nérubien",
+          description: "Summon Nerubien in your board",
         },
         {
           id: "giveCardHand",
           name: "Anub’arak",
+          description: "Give in your hand Anub’arak",
         },
       ],
     },
@@ -603,6 +605,78 @@ const cards = [
     provocation: true,
     cost: 2,
     description: "Provocation",
+  },
+  {
+    name: "Arfus",
+    attack: 2,
+    type: "Creature",
+    hp: 2,
+    cost: 4,
+    description: "",
+  },
+  {
+    name: "Gonk",
+    attack: 4,
+    type: "Creature",
+    hp: 9,
+    cost: 7,
+    description: "",
+  },
+  {
+    name: "Belluaire Leoroxx",
+    attack: 5,
+    type: "Orc",
+    hp: 5,
+    cost: 8,
+    description: "War Cry: Summon 3 Beasts in your hand",
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "giveTypedCardInHand",
+          type: "Creature",
+          time: 3,
+          description: "Summon 3 Beats in your hand",
+        },
+      ],
+    },
+  },
+  {
+    name: "Frissegueule",
+    attack: 6,
+    type: "Dragon",
+    hp: 6,
+    cost: 7,
+    provocation: true,
+    description:
+      "Provocation. Rattle of Agony: Deals 3 points of damage to a random enemy minion.",
+    abilities: {
+      dieAbilities: [
+        {
+          id: "damageInEnemyBoard",
+          dmg: 3,
+          time: 1,
+          description: "Deals 3 points of damage to a random enemy minion",
+        },
+      ],
+    },
+  },
+  {
+    name: "Alexstrasza",
+    attack: 8,
+    type: "Dragon",
+    hp: 8,
+    cost: 10,
+    description: "Battle Cry: Burns two random enemy servants.",
+    abilities: {
+      invokeAbilities: [
+        {
+          id: "burnRandom",
+          time: 2,
+          dmg: 1,
+          turn: 2,
+        },
+      ],
+    },
   },
 ];
 
