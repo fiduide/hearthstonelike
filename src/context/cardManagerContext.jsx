@@ -732,6 +732,11 @@ export const CardManagerProvider = ({ children }) => {
     ];
   };
 
+  const handleClickLog = (event) => {
+    console.log(event);
+    this.style.display = "none";
+  };
+
   return (
     <CardManagerContext.Provider
       value={{
@@ -744,6 +749,7 @@ export const CardManagerProvider = ({ children }) => {
         isAttacking,
         playerDeath,
         handleClickGiveButton,
+        handleClickLog,
       }}
     >
       {children}

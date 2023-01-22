@@ -20,6 +20,7 @@ const Board = () => {
     setCardsInPlay,
     isAttacking,
     handleClickGiveButton,
+    handleClickLog,
   } = useContext(CardManagerContext);
 
   const computerCardsInPlay = cardsInPlay.filter(
@@ -101,8 +102,8 @@ const Board = () => {
           />
         </div>
         <button onClick={handleEndTurnClick}>Passer</button>
-        <a onClick={handleClickGiveButton}>Give Card</a>
-        <div id="log"></div>
+        {/* <a onClick={handleClickGiveButton}>Give Card</a> */}
+        <div onClick={(e) => handleClickLog(e)} id="log"></div>
       </BoardStyled>
     );
   }
